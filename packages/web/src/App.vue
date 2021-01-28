@@ -1,21 +1,53 @@
+<template>
+  <router-view />
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  name: "App",
+});
+</script>
+
+<style>
 :root {
-  --container-paddding: 20px;
-  --input-padding-vertical: 6px;
+  --container-paddding: 16px;
+  --input-padding-vertical: 4px;
   --input-padding-horizontal: 4px;
   --input-margin-vertical: 4px;
   --input-margin-horizontal: 0;
 }
 
+#app {
+  user-select: none;
+  max-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
 body {
-  padding: 0 var(--container-paddding);
+  /* user-select: none; */
+  overflow: hidden;
+  padding: 0;
   color: var(--vscode-foreground);
   font-size: var(--vscode-font-size);
   font-weight: var(--vscode-font-weight);
   font-family: var(--vscode-font-family);
-  background-color: var(--vscode-editor-background);
+  background-color: var(--vscode-panel-background);
 }
 
-ol,
+* {
+  margin: 0;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+/* ol,
 ul {
   padding-left: var(--container-paddding);
 }
@@ -88,4 +120,27 @@ textarea {
 input::placeholder,
 textarea::placeholder {
   color: var(--vscode-input-placeholderForeground);
+} */
+
+.left-0 {
+  left: 0;
 }
+.z-10 {
+  z-index: 10;
+}
+.z-20 {
+  z-index: 20;
+}
+.z-30 {
+  z-index: 30;
+}
+.sticky {
+  position: sticky;
+}
+.text-right {
+  text-align: right;
+}
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+</style>

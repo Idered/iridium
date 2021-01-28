@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client"],
+    "experimentalDecorators": true,
+    "plugins": [{ "name": "@vuedx/typescript-vetur" }],
+    "baseUrl": "./src/",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.vue"]
+}
