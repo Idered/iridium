@@ -5,7 +5,7 @@ module.exports = {
   },
   projects: [
     {
-      root: './packages/web',
+      root: './ui/database',
       package: './package.json',
       tsconfig: './tsconfig.json',
       globalComponents: [

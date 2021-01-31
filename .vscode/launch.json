@@ -6,26 +6,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Extension",
-      "type": "extensionHost",
-      "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": [
-        "${workspaceFolder}/out/**/*.js",
-        "${workspaceFolder}/packages/web/dist/**/*.js"
-      ],
-      "preLaunchTask": "${defaultBuildTask}"
-    },
-    {
-      "name": "Extension Tests",
+      "name": "Run Iridium: Database",
       "type": "extensionHost",
       "request": "launch",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+        "--extensionDevelopmentPath=${workspaceFolder}/extensions/database"
       ],
-      "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-      "preLaunchTask": "${defaultBuildTask}"
+      "outFiles": [
+        "${workspaceFolder}/extensions/database/out/**/*.js",
+        "${workspaceFolder}/extensions/database/out/ui/**/*.js"
+      ],
+      "preLaunchTask": "dev:database"
     }
   ]
 }
