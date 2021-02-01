@@ -6,7 +6,6 @@ import axios from "axios";
 import { v4 } from "uuid";
 import * as knex from "knex";
 import schemaInspector from "knex-schema-inspector";
-import { table } from "console";
 
 @injectable()
 export class ApiService implements Record<Actions, (payload?: any) => any> {
@@ -29,6 +28,16 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
     const newState = [...state!, newConnection];
     this.context.workspaceState.update("connections", newState);
     return newConnection;
+  }
+
+  async [Actions.testConnection](payload: DatabaseConnection) {
+    const client = await this.getDbClient(payload);
+    try {
+      await client.raw("select 1+1 as result");
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, message: err.message };
+    }
   }
 
   async [Actions.updateConnection](payload: DatabaseConnection) {
@@ -71,11 +80,6 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
       (item) => item.uuid === payload.uuid
     ) as DatabaseConnection | null;
   }
-
-  // getSchemaInspector(db: knex, connection) {
-  //   db.client.constructor.name =
-  //   const inspector = schemaInspector(db);
-  // }
 
   async [Actions.getTables](payload: { connection: string }) {
     const connection = await this[Actions.getConnection]({
@@ -235,20 +239,6 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
       }
     );
     panel.webview.html = getRemoteWindowContent(payload.title, payload.url);
-  }
-
-  async [Actions.query](args: { type: "schema" | "table"; name?: string }) {
-    // const inspector = await this.getInspector();
-    // switch (args.type) {
-    //   case "schema":
-    //     const tables = await inspector.tables();
-    //     return tables.map((item: any) => ({
-    //       name: item,
-    //     }));
-    //   case "table":
-    //     return await inspector.columns(args.name!);
-    // }
-    // return [];
   }
 
   private async getDbClient(connection: DatabaseConnection) {

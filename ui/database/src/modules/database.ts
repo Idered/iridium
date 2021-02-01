@@ -201,6 +201,22 @@ export function useDatabase() {
     return newConnection;
   };
 
+  const testConnection = async (
+    connection: Partial<Omit<DatabaseConnection, "uuid" | "name">>
+  ) => {
+    return vscode.fetch<{ ok: boolean; message?: string }>({
+      type: Actions.testConnection,
+      payload: {
+        type: connection.type,
+        host: connection.host,
+        port: connection.port,
+        username: connection.username,
+        password: connection.password,
+        database: connection.database,
+      },
+    });
+  };
+
   const updateConnection = async (connection: Partial<DatabaseConnection>) => {
     const updatedConnection = await vscode.fetch<DatabaseConnection>({
       type: Actions.updateConnection,
@@ -291,6 +307,7 @@ export function useDatabase() {
     createConnection,
     updateConnection,
     deleteConnection,
+    testConnection,
     // Table
     getTables,
     getTableColumns,

@@ -62,15 +62,19 @@
         <Button variant="negative" type="button" @click="handleDelete"
           >Delete</Button
         >
+        <span></span>
+        <Button variant="secondary" type="button" @click="handleTestConnection"
+          >Test</Button
+        >
         <Button>Save</Button>
       </div>
       <div
         class="message"
-        v-if="isMessageVisible"
+        v-if="notification"
         v-delay="1500"
         :callback="dismissMessage"
       >
-        Connection was updated
+        {{ notification }}
       </div>
     </form>
   </BackLayout>
@@ -91,7 +95,12 @@ export default defineComponent({
   components: { Button, BackLayout, TextInput, SelectInput },
   setup() {
     const router = useRouter();
-    const { updateConnection, deleteConnection, connection } = useDatabase();
+    const {
+      updateConnection,
+      deleteConnection,
+      testConnection,
+      connection,
+    } = useDatabase();
     const defaultType = ref({
       label: "PostgreSQL",
       value: DatabaseDriver.PostgreSQL,
@@ -103,6 +112,7 @@ export default defineComponent({
     const connectionType = databaseTypes.value.find(
       (item) => item.value === (connection.value?.type as DatabaseDriver)
     )!;
+    const notification = ref("");
     const name = ref(connection.value?.name);
     const type = ref(connectionType);
     const host = ref(connection.value?.host);
@@ -129,17 +139,28 @@ export default defineComponent({
         password: password.value,
         database: database.value,
       });
-      isMessageVisible.value = true;
+      notification.value = "Connection was updated";
     }
 
-    const isMessageVisible = ref(false);
     const dismissMessage = () => {
-      isMessageVisible.value = false;
+      notification.value = "";
     };
 
     const handleDelete = () => {
       deleteConnection(connection.value?.uuid);
       router.push({ name: "ConnectionList" });
+    };
+
+    const handleTestConnection = async () => {
+      const { ok, message } = await testConnection({
+        type: type.value.value,
+        host: host.value,
+        port: port.value,
+        username: username.value,
+        password: password.value,
+        database: database.value,
+      });
+      notification.value = ok ? "Connection is valid" : message || "";
     };
 
     return {
@@ -151,12 +172,13 @@ export default defineComponent({
       port,
       username,
       password,
+      notification,
       connection,
       database,
       handleSubmit,
       handleDelete,
-      isMessageVisible,
       dismissMessage,
+      handleTestConnection,
     };
   },
 });
@@ -193,7 +215,8 @@ export default defineComponent({
 }
 .actions {
   margin-top: 16px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  column-gap: 8px;
+  grid-template-columns: auto 1fr auto auto;
 }
 </style>

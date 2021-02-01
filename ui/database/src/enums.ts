@@ -3,7 +3,6 @@ export enum Actions {
   getEntities = "GET_ENTITIES",
   goto = "GOTO",
   openURL = "OPEN_URL",
-  query = "QUERY",
 
   getConfig = "GET_CONFIG",
 
@@ -12,6 +11,7 @@ export enum Actions {
   createConnection = "CREATE_CONNECTION",
   updateConnection = "UPDATE_CONNECTION",
   deleteConnection = "DELETE_CONNECTION",
+  testConnection = "TEST_CONNECTION",
 
   getTables = "GET_TABLES",
   getTableColumns = "GET_TABLE_COLUMNS",
