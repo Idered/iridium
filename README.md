@@ -11,6 +11,7 @@
 
 - [Database](./extensions/database/README.md) - Public beta - [View in Marketplace](https://marketplace.visualstudio.com/items?itemName=idered.iridium-database)
 - NestJS - Private beta
+- Figma - Planned
 - Vue - Planned
 - React - Planned
 
