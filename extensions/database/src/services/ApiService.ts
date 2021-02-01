@@ -84,13 +84,9 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
     if (!connection) {
       return [];
     }
-    console.log({ connection });
     const db = await this.getDbClient(connection);
-    console.log({ db });
     const inspector = schemaInspector(db);
-    console.log({ inspector });
     const tables = await inspector.tables();
-    console.log({ tables });
     db.destroy();
     tables.sort();
     return tables;
