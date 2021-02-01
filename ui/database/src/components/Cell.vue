@@ -31,7 +31,7 @@ export default defineComponent({
 
 <style scoped>
 .cell {
-  text-align: left;
+  user-select: text;
   border: 1px solid var(--vscode-textBlockQuote-background);
   border-left-width: 0;
   padding: 4px 8px;

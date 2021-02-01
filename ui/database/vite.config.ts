@@ -9,7 +9,10 @@ export default defineConfig({
     "@shared": resolve(__dirname, "../shared"),
   },
   build: {
-    outDir: "../../extensions/database/ui",
+    manifest: true,
+    sourcemap: true,
+    emptyOutDir: true,
+    outDir: "../../extensions/database/out/ui",
   },
   root: ".",
   server: {

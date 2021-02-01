@@ -4,10 +4,6 @@
   "description": "Nest.js Client",
   "private": true,
   "version": "0.0.1",
-  "workspaces": [
-    "extensions/*",
-    "ui/*"
-  ],
   "scripts": {
     "vscode:prepublish": "tsc --build",
     "dev:database": "concurrently \"yarn --cwd extensions\/database dev\" \"yarn --cwd ui\/database dev\""

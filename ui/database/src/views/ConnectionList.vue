@@ -49,9 +49,6 @@
           >
         </div>
       </div>
-      <div class="container" v-if="loading">
-        <Loader>Loading connections...</Loader>
-      </div>
     </BackLayout>
   </DefaultLayout>
 </template>
@@ -60,14 +57,13 @@
 import { defineComponent, onMounted, ref } from "vue";
 import Button from "@shared/components/Button.vue";
 import SelectInput from "@shared/components/SelectInput.vue";
-import Loader from "@shared/components/Loader.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import BackLayout from "@/layouts/BackLayout.vue";
 import { useDatabase } from "@/modules/database";
 
 export default defineComponent({
   name: "ConnectionList",
-  components: { Button, BackLayout, DefaultLayout, SelectInput, Loader },
+  components: { Button, BackLayout, DefaultLayout, SelectInput },
   setup() {
     const { connections, getConnections } = useDatabase();
     const loading = ref(false);

@@ -72,6 +72,11 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
     ) as DatabaseConnection | null;
   }
 
+  // getSchemaInspector(db: knex, connection) {
+  //   db.client.constructor.name =
+  //   const inspector = schemaInspector(db);
+  // }
+
   async [Actions.getTables](payload: { connection: string }) {
     const connection = await this[Actions.getConnection]({
       uuid: payload.connection,
@@ -79,9 +84,13 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
     if (!connection) {
       return [];
     }
+    console.log({ connection });
     const db = await this.getDbClient(connection);
+    console.log({ db });
     const inspector = schemaInspector(db);
+    console.log({ inspector });
     const tables = await inspector.tables();
+    console.log({ tables });
     db.destroy();
     tables.sort();
     return tables;

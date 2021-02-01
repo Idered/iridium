@@ -1,12 +1,11 @@
 {
-  "name": "iridium.database.ui",
-  "version": "0.0.0",
+  "name": "iridium-database-ui",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "vuedx-typecheck . && vite build"
   },
   "dependencies": {
-    "@types/node": "^14.14.22",
     "@types/uuid": "^8.3.0",
     "@types/vue-select": "^2.5.1",
     "@vueform/multiselect": "^1.2.5",

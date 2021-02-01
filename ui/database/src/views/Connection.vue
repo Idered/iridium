@@ -103,6 +103,7 @@ export default defineComponent({
       if (!tableName) return;
       await db.getTableRows(tableName);
       await db.getTableColumns(tableName);
+
       db.setVisibleColumns(db.columns.value.map((item) => item.name));
       if (tableContainer.value) {
         tableContainer.value.scrollLeft = 0;
