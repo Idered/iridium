@@ -11,7 +11,9 @@
 
 ## Extensions
 
-- [Database](./extensions/database/README.md) - Public beta
+- [Database](./extensions/database/README.md) - Public beta - [View in Marketplace](https://marketplace.visualstudio.com/items?itemName=idered.iridium-database)
 - NestJS - Private beta
-- React - Planned
 - Vue - Planned
+- React - Planned
+
+
