@@ -272,7 +272,6 @@ export function useDatabase() {
 
   const resetFilters = () => {
     state.filters = [];
-    console.log("clear filters");
   };
 
   return {
