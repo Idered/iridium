@@ -58,10 +58,6 @@
           <TextInput v-model="database" id="database" type="text" />
         </div>
       </div>
-      <!-- <div class="message" v-if="suggestion">
-        NestJS connection has been detected
-        <Button type="button" @click="useSuggestion">Use</Button>
-      </div> -->
       <div class="actions">
         <span></span>
         <Button variant="secondary" type="button" @click="handleTestConnection"
@@ -82,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, toRef, toRefs } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import Button from "@shared/components/Button.vue";
 import TextInput from "@shared/components/TextInput.vue";
 import SelectInput from "@shared/components/SelectInput.vue";
@@ -91,17 +87,13 @@ import { DatabaseDriver } from "@/enums";
 import router from "@/router";
 import { useDatabase } from "@/modules/database";
 import { useConnectionModel } from "@/models/connection";
-// import { useNest } from "@/modules/nest";
-import { DatabaseConnection } from "@/types";
 
 export default defineComponent({
   name: "ConnectionCreate",
   components: { Button, BackLayout, TextInput, SelectInput },
   setup() {
-    // const { config, loadConfig } = useNest();
     const notification = ref("");
     const { createConnection, clearState, testConnection } = useDatabase();
-    const suggestion = ref<Omit<DatabaseConnection, "uuid"> | null>(null);
     const connection = useConnectionModel();
     const defaultType = ref({
       label: "PostgreSQL",
@@ -121,20 +113,6 @@ export default defineComponent({
     connection.type.value = defaultType.value;
     connection.port.value = portPlaceholder.value;
 
-    onMounted(async () => {
-      // await loadConfig();
-      // if (!config.value?.orm) return;
-      // suggestion.value = {
-      //   name: config.value.orm?.name,
-      //   type: config.value.orm?.type,
-      //   host: config.value.orm?.host,
-      //   port: config.value.orm?.port,
-      //   username: config.value.orm?.username,
-      //   password: config.value.orm?.password,
-      //   database: config.value.orm?.database,
-      // };
-    });
-
     const dismissMessage = () => {
       notification.value = "";
     };
@@ -150,17 +128,6 @@ export default defineComponent({
           },
         });
       }
-    }
-
-    function useSuggestion() {
-      connection.type.value = databaseTypes.value.find(
-        (item) => item.value === suggestion.value?.type
-      )!;
-      connection.host.value = suggestion.value?.host!;
-      connection.port.value = suggestion.value?.port!;
-      connection.username.value = suggestion.value?.username!;
-      connection.password.value = suggestion.value?.password!;
-      connection.database.value = suggestion.value?.database!;
     }
 
     const handleTestConnection = async () => {
@@ -179,8 +146,6 @@ export default defineComponent({
       databaseTypes,
       portPlaceholder,
       handleSubmit,
-      suggestion,
-      useSuggestion,
       notification,
       dismissMessage,
       handleTestConnection,
