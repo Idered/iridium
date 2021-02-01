@@ -10,7 +10,6 @@ export default defineConfig({
   },
   build: {
     manifest: true,
-    sourcemap: true,
     emptyOutDir: true,
     outDir: "../../extensions/database/out/ui",
   },
