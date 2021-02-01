@@ -68,9 +68,9 @@ export default class ContentProvider {
   }
 
   getContent(context: vscode.ExtensionContext) {
-    // if (process.env.NODE_ENV === "production") {
-    //   return this.getProductionContent(context);
-    // }
+    if (process.env.NODE_ENV === "production") {
+      return this.getProductionContent(context);
+    }
     return this.getDevServerContent();
   }
 }
