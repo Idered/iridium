@@ -1,5 +1,3 @@
-# Iridium
-
 ![](.github/banner.png)
 
 <p align="center">
