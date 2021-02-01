@@ -85,4 +85,12 @@ export default defineComponent({
   color: var(--vscode-textPreformat-foreground);
   background: none;
 }
+.button--secondary:disabled,
+.button--secondary:disabled:hover {
+  color: var(--vscode-panel-foreground);
+  opacity: 0.5;
+  border: 1px solid var(--vscode-input-border);
+  background: none;
+  cursor: default;
+}
 </style>

@@ -10,6 +10,36 @@
       <Button
         variant="secondary"
         :height="24"
+        :title="
+          liveMode ? 'Disable real-time updates' : 'Enable real-time updates'
+        "
+        square
+        :disabled="!table"
+        @click="toggleLiveMode"
+        ><svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            class="live-mode-on"
+            v-if="liveMode"
+            d="M4.50024 2.99988L6.00024 2.99988V12.9999H4.50024V2.99988ZM11.5002 2.99988V12.9999H10.0002V2.99988L11.5002 2.99988Z"
+          />
+          <path
+            v-else
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M4.00024 2V14.4805L12.9149 8.24024L4.00024 2ZM11.1812 8.24024L4.99524 12.5684V3.91209L11.1812 8.24024Z"
+            fill="currentColor"
+          />
+        </svg>
+      </Button>
+      <Button
+        variant="secondary"
+        :height="24"
         title="Refresh"
         square
         @click="refresh"
@@ -46,7 +76,7 @@
 import { DatabaseFilterOperator } from "@/enums";
 import { useDatabase } from "@/modules/database";
 import { v4 } from "uuid";
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, onUnmounted, ref, watch } from "vue";
 import Button from "@shared/components/Button.vue";
 import SelectInput from "@shared/components/SelectInput.vue";
 import ConnectionActions from "./ConnectionActions.vue";
@@ -65,6 +95,8 @@ export default defineComponent({
   setup() {
     const db = useDatabase();
     const showFilters = ref(false);
+    const liveMode = ref(false);
+    const liveModeTimer = ref<NodeJS.Timeout | null>(null);
     const toggleFilters = () => {
       if (showFilters.value === false && db.filters.value.length === 0) {
         db.addFilter({
@@ -78,6 +110,16 @@ export default defineComponent({
       showFilters.value = !showFilters.value;
     };
 
+    const toggleLiveMode = () => {
+      liveMode.value = !liveMode.value;
+    };
+
+    const refetch = async () => {
+      if (db.table.value) {
+        await db.getTableRows(db.table.value);
+      }
+    };
+
     // Hide filters when last filter row is removed
     watch(db.filters, () => {
       if (db.filters.value.length === 0) {
@@ -88,9 +130,29 @@ export default defineComponent({
     // Clear filters on table change
     watch(db.table, () => {
       showFilters.value = false;
+      liveMode.value = false;
+      if (liveModeTimer.value) {
+        clearInterval(liveModeTimer.value);
+      }
     });
 
-    return { ...db, toggleFilters, showFilters };
+    watch(liveMode, () => {
+      if (liveMode.value) {
+        liveModeTimer.value = setInterval(() => {
+          refetch();
+        }, 1000);
+      } else if (liveModeTimer.value) {
+        clearInterval(liveModeTimer.value);
+      }
+    });
+
+    return {
+      ...db,
+      toggleFilters,
+      liveMode,
+      toggleLiveMode,
+      showFilters,
+    };
   },
 });
 </script>
@@ -115,7 +177,7 @@ export default defineComponent({
 .select {
   grid-area: select;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   column-gap: 8px;
 }
 .pagination {
@@ -126,5 +188,8 @@ export default defineComponent({
 }
 .filters {
   grid-area: filters;
+}
+.live-mode-on {
+  fill: var(--vscode-textLink-foreground);
 }
 </style>
