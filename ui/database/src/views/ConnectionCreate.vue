@@ -63,7 +63,19 @@
         <Button type="button" @click="useSuggestion">Use</Button>
       </div> -->
       <div class="actions">
+        <span></span>
+        <Button variant="secondary" type="button" @click="handleTestConnection"
+          >Test</Button
+        >
         <Button>Create</Button>
+      </div>
+      <div
+        class="message"
+        v-if="notification"
+        v-delay="1500"
+        :callback="dismissMessage"
+      >
+        {{ notification }}
       </div>
     </form>
   </BackLayout>
@@ -87,7 +99,8 @@ export default defineComponent({
   components: { Button, BackLayout, TextInput, SelectInput },
   setup() {
     // const { config, loadConfig } = useNest();
-    const { createConnection, clearState } = useDatabase();
+    const notification = ref("");
+    const { createConnection, clearState, testConnection } = useDatabase();
     const suggestion = ref<Omit<DatabaseConnection, "uuid"> | null>(null);
     const connection = useConnectionModel();
     const defaultType = ref({
@@ -122,6 +135,10 @@ export default defineComponent({
       // };
     });
 
+    const dismissMessage = () => {
+      notification.value = "";
+    };
+
     async function handleSubmit() {
       const newConnection = await createConnection(connection.serialize());
       if (newConnection) {
@@ -146,12 +163,27 @@ export default defineComponent({
       connection.database.value = suggestion.value?.database!;
     }
 
+    const handleTestConnection = async () => {
+      const { ok, message } = await testConnection({
+        type: connection.type.value?.value,
+        host: connection.host.value,
+        port: connection.port.value!,
+        username: connection.username.value,
+        password: connection.password.value,
+        database: connection.database.value,
+      });
+      notification.value = ok ? "Connection is valid" : message || "";
+    };
+
     return {
       databaseTypes,
       portPlaceholder,
       handleSubmit,
       suggestion,
       useSuggestion,
+      notification,
+      dismissMessage,
+      handleTestConnection,
       ...connection,
     };
   },
@@ -189,7 +221,9 @@ export default defineComponent({
 }
 .actions {
   margin-top: 16px;
-  display: flex;
+  display: grid;
+  column-gap: 8px;
+  grid-template-columns: 1fr auto auto;
   justify-content: flex-end;
 }
 </style>
