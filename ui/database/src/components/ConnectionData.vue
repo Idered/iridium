@@ -1,9 +1,8 @@
 <template>
-  <table class="table" cellSpacing="0" v-if="columns">
+  <table cellSpacing="0" v-if="columns">
     <thead>
       <tr>
         <HeadCell
-          class="table__th"
           v-for="column in displayColumns"
           :column="column"
           :key="column.name"
@@ -13,7 +12,6 @@
     <tbody>
       <tr v-for="row in rows" :key="row.id">
         <Cell
-          class="table__td"
           v-for="column in displayColumns"
           :row="row"
           :column="column"
@@ -47,14 +45,17 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.table {
+table {
   width: 100%;
   overflow: auto;
 }
-.table__th:last-child {
+th:last-child {
   border-right-width: 0;
 }
-.table__td:last-child {
+td:last-child {
   border-right-width: 0;
+}
+tr:nth-child(even) {
+  background-color: var(--vscode-input-background);
 }
 </style>
