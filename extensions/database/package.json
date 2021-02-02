@@ -1,6 +1,6 @@
 {
   "name": "iridium-database",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "main": "./out/extension.js",
   "license": "MIT",
   "scripts": {

@@ -2,7 +2,7 @@
 
 All notable changes to Iridium — Database will be documented in this file.
 
-## [Unreleased]
+## [0.3.0]
 - Added row &amp; cell selection
 - Added color to every even table row 
 
