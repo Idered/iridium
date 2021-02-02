@@ -10,12 +10,24 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="row in rows" :key="row.id">
+      <tr
+        v-for="(row, rowIndex) in rows"
+        :key="row.id"
+        :class="{
+          selected: selected?.rowIndex === rowIndex,
+        }"
+      >
         <Cell
+          @click="selectCell(rowIndex, column.name)"
           v-for="column in displayColumns"
           :row="row"
           :column="column"
           :key="column.name"
+          :class="{
+            selected:
+              selected?.rowIndex === rowIndex &&
+              selected?.columnName === column.name,
+          }"
         />
       </tr>
     </tbody>
@@ -60,5 +72,13 @@ tr:nth-child(odd) {
 }
 tr:nth-child(even) {
   background-color: var(--vscode-input-background);
+}
+tr.selected {
+  color: white;
+  background-color: var(--vscode-charts-lines);
+}
+tbody td.selected {
+  color: white;
+  box-shadow: inset 0 0 0 1px var(--vscode-charts-blue);
 }
 </style>

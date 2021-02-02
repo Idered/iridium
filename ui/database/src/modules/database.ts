@@ -16,6 +16,10 @@ type State = {
   columns: DatabaseTableColumn[];
   rows: Record<string, any>[];
   filters: DatabaseFilter[];
+  selected: {
+    rowIndex: number;
+    columnName: string;
+  } | null;
   order: {
     column: string;
     direction: "asc" | "desc";
@@ -37,6 +41,7 @@ export const createDatabaseState = (): [Symbol, State] => {
     table: null,
     visibleColumns: [],
     columns: [],
+    selected: null,
     rows: [],
     filters: [],
     order: null,
@@ -290,6 +295,16 @@ export function useDatabase() {
     state.filters = [];
   };
 
+  const selectCell = (rowIndex?: number, columnName?: string) => {
+    state.selected =
+      typeof rowIndex === "number" && columnName
+        ? {
+            rowIndex: rowIndex,
+            columnName: columnName,
+          }
+        : null;
+  };
+
   return {
     addFilter,
     removeFilter,
@@ -314,6 +329,7 @@ export function useDatabase() {
     getTableRows,
     setColumns,
     setRows,
+    selectCell,
     selectTable,
     ...toRefs(state),
   };

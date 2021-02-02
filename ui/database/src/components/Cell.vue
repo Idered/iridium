@@ -44,5 +44,6 @@ export default defineComponent({
   overflow: hidden;
   text-overflow: ellipsis;
   background: inherit;
+  cursor: default;
 }
 </style>

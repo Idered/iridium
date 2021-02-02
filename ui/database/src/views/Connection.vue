@@ -99,6 +99,7 @@ export default defineComponent({
       db.resetOrder();
       db.setRows([]);
       db.setColumns([]);
+      db.selectCell();
 
       if (!tableName) return;
       await db.getTableRows(tableName);
