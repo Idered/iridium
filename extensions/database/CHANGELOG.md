@@ -1,8 +1,9 @@
 # Change Log
 
-All notable changes to Iridium extensions will be documented in this file.
+All notable changes to Iridium — Database will be documented in this file.
 
 ## [Unreleased]
+- Added row &amp; cell selection
 - Added color to every even table row 
 
 ## [0.2.0]
