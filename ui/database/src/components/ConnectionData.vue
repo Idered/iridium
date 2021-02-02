@@ -55,6 +55,9 @@ th:last-child {
 td:last-child {
   border-right-width: 0;
 }
+tr:nth-child(odd) {
+  background-color: var(--vscode-panel-background);
+}
 tr:nth-child(even) {
   background-color: var(--vscode-input-background);
 }

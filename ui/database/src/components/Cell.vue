@@ -43,5 +43,6 @@ export default defineComponent({
   line-height: 18px;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: inherit;
 }
 </style>
