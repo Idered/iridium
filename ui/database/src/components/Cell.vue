@@ -33,11 +33,9 @@ export default defineComponent({
 .cell {
   user-select: text;
   border: 1px solid var(--vscode-textBlockQuote-background);
-  border-left-width: 0;
   padding: 4px 8px;
   font-size: 12px;
   font-weight: normal;
-  border-top: 0;
   white-space: nowrap;
   max-width: 160px;
   line-height: 18px;
