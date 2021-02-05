@@ -66,6 +66,7 @@ export default defineComponent({
   white-space: nowrap;
   background: var(--vscode-panel-background);
   cursor: pointer;
+  z-index: 10;
 }
 .head-cell:hover {
   color: var(--vscode-textPreformat-foreground);

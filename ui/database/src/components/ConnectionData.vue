@@ -60,8 +60,6 @@ export default defineComponent({
 table {
   width: 100%;
   overflow: auto;
-  border-spacing: 0;
-  border-collapse: collapse;
 }
 th:last-child {
   border-right-width: 0;
@@ -76,11 +74,19 @@ tr:nth-child(even) {
   background-color: var(--vscode-input-background);
 }
 tr.selected {
-  color: var(--vscode-inputOption-activeForeground);
-  background-color: var(--vscode-inputOption-activeBackground);
+  color: var(--vscode-textPreformat-foreground);
 }
 tbody td.selected {
-  border-color: var(--vscode-inputOption-activeBorder);
-  border-style: double;
+  position: relative;
+}
+tbody td.selected::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 1px solid var(--vscode-inputOption-activeBorder);
 }
 </style>

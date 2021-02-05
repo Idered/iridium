@@ -2,6 +2,7 @@
   <td
     class="cell"
     :class="{
+      'z-10': column.is_primary_key,
       'left-0': column.is_primary_key,
       sticky: column.is_primary_key,
       'text-right': ['integer', 'float'].includes(column.type),
@@ -32,7 +33,8 @@ export default defineComponent({
 <style scoped>
 .cell {
   user-select: text;
-  border: 1px solid var(--vscode-textBlockQuote-background);
+  border-top: 1px solid var(--vscode-textBlockQuote-background);
+  border-left: 1px solid var(--vscode-textBlockQuote-background);
   padding: 4px 8px;
   font-size: 12px;
   font-weight: normal;
