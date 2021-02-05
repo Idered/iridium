@@ -17,8 +17,9 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
   ) {}
 
   async [Actions.createConnection](payload: DatabaseConnection) {
-    const state = this.context.workspaceState.get<DatabaseConnection[]>(
-      "connections"
+    const state = this.context.globalState.get<DatabaseConnection[]>(
+      "connections",
+      []
     );
     const newConnection = {
       ...payload,
@@ -26,7 +27,7 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
       uuid: v4(),
     };
     const newState = [...state!, newConnection];
-    this.context.workspaceState.update("connections", newState);
+    this.context.globalState.update("connections", newState);
     return newConnection;
   }
 
@@ -41,39 +42,39 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
   }
 
   async [Actions.updateConnection](payload: DatabaseConnection) {
-    const state = this.context.workspaceState.get<DatabaseConnection[]>(
-      "connections"
+    const state = this.context.globalState.get<DatabaseConnection[]>(
+      "connections",
+      []
     );
-    if (!state) {
-      return;
-    }
     const index = state.findIndex((item) => item.uuid === payload.uuid);
     state.splice(index, 1);
     state.splice(index, 0, payload);
-    this.context.workspaceState.update("connections", state);
+    this.context.globalState.update("connections", state);
     return payload;
   }
 
   async [Actions.deleteConnection](payload: { uuid: string }) {
-    const state = this.context.workspaceState.get<DatabaseConnection[]>(
-      "connections"
+    const state = this.context.globalState.get<DatabaseConnection[]>(
+      "connections",
+      []
     );
-    if (!state) {
-      return;
-    }
     const index = state.findIndex((item) => item.uuid === payload.uuid);
     state.splice(index, 1);
-    this.context.workspaceState.update("connections", state);
+    this.context.globalState.update("connections", state);
     return payload;
   }
 
   async [Actions.getConnections]() {
-    return this.context.workspaceState.get<DatabaseConnection[]>("connections");
+    return this.context.globalState.get<DatabaseConnection[]>(
+      "connections",
+      []
+    );
   }
 
   async [Actions.getConnection](payload: { uuid: string }) {
-    const connections = this.context.workspaceState.get<DatabaseConnection[]>(
-      "connections"
+    const connections = this.context.globalState.get<DatabaseConnection[]>(
+      "connections",
+      []
     );
 
     return connections?.find(
