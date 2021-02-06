@@ -1,6 +1,6 @@
 <template>
   <div class="dropdown">
-    <div class="content" :class="{ isOpen }" @click.stop>
+    <div class="content" :class="{ isOpen, [position]: true }" @click.stop>
       <slot name="content" :close="toggle" />
     </div>
     <div class="target" @click.stop="toggle">
@@ -15,6 +15,12 @@ import { defineComponent, onBeforeUnmount, onMounted, ref } from "vue";
 
 export default defineComponent({
   name: "Dropdown",
+  props: {
+    position: {
+      type: String,
+      default: "bottom-right",
+    },
+  },
   setup() {
     const uuid = ref(v4());
     const isOpen = ref(false);
@@ -58,14 +64,22 @@ export default defineComponent({
 .content {
   position: absolute;
   background: var(--vscode-panel-background);
-  right: 0;
-  top: 100%;
-  margin-top: 8px;
   border: 1px solid var(--vscode-input-border);
   display: none;
   max-height: 50vh;
   overflow: auto;
   max-width: calc(100vw - 16px);
+  z-index: 30;
+}
+.bottom-right {
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+}
+.top-right {
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 8px;
 }
 .content.isOpen {
   display: block;

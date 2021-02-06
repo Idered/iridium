@@ -66,9 +66,8 @@
         </svg>
       </Button>
     </div>
-    <ConnectionPagination class="pagination" />
-    <ConnectionActions class="actions" @toggleFilters="toggleFilters" />
     <ConnectionFilters class="filters" v-if="showFilters" />
+    <ConnectionActions class="actions" @toggleFilters="toggleFilters" />
   </div>
 </template>
 
@@ -76,16 +75,14 @@
 import { DatabaseFilterOperator } from "@/enums";
 import { useDatabase } from "@/modules/database";
 import { v4 } from "uuid";
-import { defineComponent, onUnmounted, ref, watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import Button from "@shared/components/Button.vue";
 import SelectInput from "@shared/components/SelectInput.vue";
 import ConnectionActions from "./ConnectionActions.vue";
 import ConnectionFilters from "./ConnectionFilters.vue";
-import ConnectionPagination from "./ConnectionPagination.vue";
 
 export default defineComponent({
   components: {
-    ConnectionPagination,
     ConnectionActions,
     ConnectionFilters,
     SelectInput,

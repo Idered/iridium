@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DatabaseDriver, DatabaseFilterOperator } from "@/enums";
 
-type DatabaseConnection = {
+export type DatabaseConnection = {
   uuid: string;
   name: string;
   type: DatabaseDriver;
@@ -12,11 +12,11 @@ type DatabaseConnection = {
   database: string;
 };
 
-type DatabaseTable = {
+export type DatabaseTable = {
   name: string;
 };
 
-type DatabaseTableColumn = {
+export type DatabaseTableColumn = {
   comment: null | string;
   default_value: null | string | boolean | number;
   foreign_key_column: null | string;
@@ -34,10 +34,25 @@ type DatabaseTableColumn = {
   type: string;
 };
 
-type DatabaseFilter = {
+export type DatabaseFilter = {
   uuid: string;
   active: boolean;
   column: string;
   operator: DatabaseFilterOperator;
   value: string;
+};
+
+export enum MutationType {
+  UpdateColumn,
+  RemoveRow,
+}
+
+export type DatabaseMutation = {
+  newValue: any;
+  tableName: any;
+  originalValue: any;
+  type: MutationType;
+  columnName: string;
+  primaryColumnValue?: any;
+  primaryColumnName?: string;
 };

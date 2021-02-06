@@ -1,10 +1,13 @@
 <template>
   <th
+    ref="col"
     class="head-cell"
+    :style="{
+      '--width': width,
+    }"
     :class="{
-      'left-0': column.is_primary_key,
-      sticky: column.is_primary_key,
       'z-20': column.is_primary_key,
+      'left-0': column.is_primary_key,
       'text-right': ['integer', 'float'].includes(column.type),
     }"
     :key="column?.name"
@@ -31,14 +34,17 @@
         />
       </svg>
     </span>
+    <HeadCellResizer :col="col" />
   </th>
 </template>
 
 <script lang="ts">
 import { useDatabase } from "@/modules/database";
-import { defineComponent } from "vue";
+import { defineComponent, onBeforeUnmount, onMounted, ref } from "vue";
+import HeadCellResizer from "./HeadCellResizer.vue";
 
 export default defineComponent({
+  components: { HeadCellResizer },
   name: "HeadCell",
   props: {
     column: {
@@ -46,9 +52,19 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  emits: ["mounted", "before-unmount"],
+  setup({}, { emit }) {
     const { order, toggleColumnOrder } = useDatabase();
-    return { order, toggleColumnOrder };
+    const col = ref<HTMLTableHeaderCellElement | null>(null);
+    const width = ref(0);
+    onMounted(() => {
+      width.value = window.getComputedStyle(col.value).width;
+      emit("mounted");
+    });
+    onBeforeUnmount(() => {
+      emit("before-unmount");
+    });
+    return { order, toggleColumnOrder, col, width };
   },
 });
 </script>
@@ -67,6 +83,7 @@ export default defineComponent({
   background: var(--vscode-panel-background);
   cursor: pointer;
   z-index: 10;
+  width: var(--width, auto);
 }
 .head-cell:hover {
   color: var(--vscode-textPreformat-foreground);

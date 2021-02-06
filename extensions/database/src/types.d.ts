@@ -12,3 +12,13 @@ type DatabaseConnection = {
 type DatabaseTable = {
   name: string;
 };
+
+type DatabaseMutation = {
+  newValue: any;
+  tableName: any;
+  originalValue: any;
+  type: MutationType;
+  columnName: string;
+  primaryColumnValue?: any;
+  primaryColumnName?: string;
+};

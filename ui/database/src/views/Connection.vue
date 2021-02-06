@@ -1,5 +1,5 @@
 <template>
-  <DefaultLayout>
+  <DefaultLayout @keypress="handleShortcut">
     <BackLayout :to="{ name: 'ConnectionList' }">
       <template #title>
         {{ connection?.name }}
@@ -31,8 +31,12 @@
 
       <div class="view">
         <ConnectionHeader />
-        <div class="view__table" ref="tableContainer">
+        <div class="table" ref="tableContainer">
           <ConnectionData />
+        </div>
+        <div class="footer" v-if="table">
+          <ConnectionPagination />
+          <ConnectionColumns />
         </div>
       </div>
     </BackLayout>
@@ -50,9 +54,11 @@ import ConnectionData from "@/components/ConnectionData.vue";
 import BackLayout from "@/layouts/BackLayout.vue";
 import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import ConnectionHeader from "@/components/ConnectionHeader.vue";
+import ConnectionPagination from "@/components/ConnectionPagination.vue";
+import ConnectionColumns from "@/components/ConnectionColumns.vue";
+import { useDatabaseMutations } from "@/modules/database-mutations";
 
 export default defineComponent({
-  name: "Connection",
   components: {
     Button,
     BackLayout,
@@ -60,11 +66,15 @@ export default defineComponent({
     DefaultLayout,
     ConnectionData,
     ConnectionHeader,
+    ConnectionPagination,
+    ConnectionColumns,
   },
+  name: "Connection",
   setup() {
     const route = useRoute();
     const tableContainer = ref<HTMLDivElement>();
     const db = useDatabase();
+    const dbMutations = useDatabaseMutations();
     const throttledLoadMore = throttle(() => db.loadMore(), 100);
     const loadMore = (event: any) => {
       let isAtBottom =
@@ -73,6 +83,16 @@ export default defineComponent({
       let hasMore = db.pagination.value.total > db.rows.value.length;
       if (isAtBottom && hasMore) {
         throttledLoadMore();
+      }
+    };
+    const handleShortcut = async (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.code === "KeyS") {
+        await dbMutations.commitMutations(db.connection.value);
+        await db.getTableRows(db.table.value!);
+        dbMutations.discardMutations();
+      }
+      if (event.ctrlKey && event.code === "KeyD") {
+        dbMutations.discardMutations();
       }
     };
 
@@ -117,7 +137,7 @@ export default defineComponent({
       }
     });
 
-    return { ...db, tableContainer };
+    return { ...db, tableContainer, handleShortcut };
   },
 });
 </script>
@@ -126,11 +146,16 @@ export default defineComponent({
 .view {
   overflow: hidden;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
   row-gap: 8px;
 }
-.view__table {
+.table {
   display: grid;
   overflow: auto;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px 8px;
 }
 </style>

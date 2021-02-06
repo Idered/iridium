@@ -16,6 +16,35 @@ export class ApiService implements Record<Actions, (payload?: any) => any> {
     private entityManagerService: EntityManagerService
   ) {}
 
+  async [Actions.commitMutations](payload: {
+    connection: string;
+    mutations: DatabaseMutation[];
+  }) {
+    const connection = await this[Actions.getConnection]({
+      uuid: payload.connection,
+    });
+    if (!connection) {
+      return [];
+    }
+    const db = await this.getDbClient(connection);
+    return Promise.all(
+      payload.mutations.map((item) => {
+        const hasPrimaryColumn =
+          item.primaryColumnName && item.primaryColumnValue;
+        const query = hasPrimaryColumn
+          ? { [item.primaryColumnName]: item.primaryColumnValue }
+          : {
+              [item.columnName]: item.originalValue,
+            };
+        return db(item.tableName)
+          .where(query)
+          .update({
+            [item.columnName]: item.newValue,
+          });
+      })
+    );
+  }
+
   async [Actions.createConnection](payload: DatabaseConnection) {
     const state = this.context.globalState.get<DatabaseConnection[]>(
       "connections",

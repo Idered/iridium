@@ -12,6 +12,7 @@ export enum Actions {
   updateConnection = "UPDATE_CONNECTION",
   deleteConnection = "DELETE_CONNECTION",
   testConnection = "TEST_CONNECTION",
+  commitMutations = "COMMIT_MUTATIONS",
 
   getTables = "GET_TABLES",
   getTableColumns = "GET_TABLE_COLUMNS",

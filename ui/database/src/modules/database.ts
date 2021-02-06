@@ -4,8 +4,10 @@ import {
   DatabaseConnection,
   DatabaseFilter,
   DatabaseTableColumn,
+  MutationType,
 } from "@/types";
 import { toRefs, reactive, inject } from "vue";
+import { useDatabaseMutations } from "./database-mutations";
 
 type State = {
   connections: DatabaseConnection[];
@@ -56,6 +58,7 @@ export const createDatabaseState = (): [Symbol, State] => {
 
 export function useDatabase() {
   const vscode = useVSCode();
+  const { mutations } = useDatabaseMutations();
   const state = inject<State>(stateSymbol)!;
 
   // Methods
@@ -296,6 +299,9 @@ export function useDatabase() {
   };
 
   const selectCell = (rowIndex?: number, columnName?: string) => {
+    const wasSelected =
+      state.selected?.rowIndex === rowIndex &&
+      state.selected?.columnName === columnName;
     state.selected =
       typeof rowIndex === "number" && columnName
         ? {
@@ -303,6 +309,31 @@ export function useDatabase() {
             columnName: columnName,
           }
         : null;
+    return wasSelected;
+  };
+
+  const getCellMutation = (row: Record<string, any>, columnName: string) => {
+    return mutations.value.find((item) => {
+      const isMatchedByPrimaryColumn =
+        item.primaryColumnName &&
+        row[item.primaryColumnName] === item.primaryColumnValue;
+      const isMatchedByColumnName =
+        !item.primaryColumnName && item.columnName === columnName;
+      return (
+        item.tableName === state.table &&
+        item.columnName === columnName &&
+        item.type === MutationType.UpdateColumn &&
+        (isMatchedByPrimaryColumn || isMatchedByColumnName)
+      );
+    });
+  };
+
+  const getCellValue = (row: Record<string, any>, columnName: string) => {
+    const mutation = getCellMutation(row, columnName);
+    if (mutation) {
+      return mutation.newValue;
+    }
+    return row[columnName];
   };
 
   return {
@@ -331,6 +362,8 @@ export function useDatabase() {
     setRows,
     selectCell,
     selectTable,
+    getCellValue,
+    getCellMutation,
     ...toRefs(state),
   };
 }

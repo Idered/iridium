@@ -1,5 +1,6 @@
 <template>
   <td
+    tabindex="0"
     class="cell"
     :class="{
       'z-10': column.is_primary_key,
@@ -8,7 +9,7 @@
       'text-right': ['integer', 'float'].includes(column.type),
     }"
   >
-    {{ row[column.name] }}
+    <slot />
   </td>
 </template>
 
@@ -17,12 +18,9 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Cell",
+  emits: ["enter"],
   props: {
     column: {
-      type: Object,
-      required: true,
-    },
-    row: {
       type: Object,
       required: true,
     },
@@ -32,7 +30,7 @@ export default defineComponent({
 
 <style scoped>
 .cell {
-  user-select: text;
+  user-select: none;
   border-top: 1px solid var(--vscode-textBlockQuote-background);
   border-left: 1px solid var(--vscode-textBlockQuote-background);
   padding: 4px 8px;
@@ -45,5 +43,6 @@ export default defineComponent({
   text-overflow: ellipsis;
   background: inherit;
   cursor: default;
+  outline: 1px solid transparent;
 }
 </style>
