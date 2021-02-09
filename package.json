@@ -6,7 +6,8 @@
   "version": "0.0.1",
   "scripts": {
     "vscode:prepublish": "tsc --build",
-    "dev:database": "concurrently \"yarn --cwd extensions\/database dev\" \"yarn --cwd ui\/database dev\""
+    "dev:database": "concurrently \"yarn --cwd extensions\/database dev\" \"yarn --cwd ui\/database dev\"",
+    "dev:figma": "concurrently \"yarn --cwd extensions\/figma dev\" \"yarn --cwd ui\/figma dev\""
   },
   "dependencies": {
     "concurrently": "^5.3.0",

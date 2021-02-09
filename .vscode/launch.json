@@ -17,6 +17,19 @@
         "${workspaceFolder}/extensions/database/out/ui/**/*.js"
       ],
       "preLaunchTask": "dev:database"
+    },
+    {
+      "name": "Run Iridium: Figma",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/extensions/figma"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/extensions/figma/out/**/*.js",
+        "${workspaceFolder}/extensions/figma/out/ui/**/*.js"
+      ],
+      "preLaunchTask": "dev:figma"
     }
   ]
 }
