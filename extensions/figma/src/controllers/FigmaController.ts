@@ -1,6 +1,10 @@
-import { Controller } from "../foundation/Routing/Controller";
+import { inject, injectable } from "inversify";
+import { VSCodeContext } from "foundation/App/VSCodeContext";
 
-export class FigmaController extends Controller {
+@injectable()
+export class FigmaController {
+  @inject(VSCodeContext) context: VSCodeContext;
+
   list() {
     return {
       message: "ok",

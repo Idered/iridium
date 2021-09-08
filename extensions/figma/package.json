@@ -67,6 +67,7 @@
   "dependencies": {
     "@types/uuid": "^8.3.0",
     "axios": "^0.21.1",
+    "foundation": "link:../foundation/foundation",
     "inversify": "^5.0.5",
     "reflect-metadata": "^0.1.13",
     "ts-loader": "^8.0.14",

@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import * as vscode from "vscode";
+import { bootstrap } from "foundation/App/bootstrap";
 import routes from "./routes";
-import { bootstrap } from "./foundation/App/bootstrap";
 
 export function activate(context: vscode.ExtensionContext) {
   bootstrap({

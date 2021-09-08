@@ -1,6 +1,10 @@
 <template>
   <div>
-    <Button @click="load">Test</Button>
+    <div>Hello1</div>
+    <Button :height="24" variant="secondary" title="Discard changes">
+      Discard
+    </Button>
+    <div>Hello2</div>
   </div>
 </template>
 
@@ -15,9 +19,13 @@ export default defineComponent({
   setup() {
     const vscode = useVSCode();
     const load = async () => {
-      const team = await vscode.fetch.post("/teams", { id: "random id" });
-      const figma = await vscode.fetch.post("/figma", { id: "random id" });
-      console.log(team);
+      try {
+        const team = await vscode.fetch.post("/teams", { id: "random id" });
+        const figma = await vscode.fetch.post("/figma", { id: "random id" });
+        console.log({ team, figma });
+      } catch (err) {
+        console.log(err);
+      }
     };
     return { load };
   },

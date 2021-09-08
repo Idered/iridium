@@ -15,8 +15,10 @@ export function bootstrap(props: {
 }) {
   const { routes, context, viewId } = props;
 
-  // Attach vscode context to app
   app.bind(VSCodeContext).toConstantValue(context);
+  app.bind(Bus).toConstantValue(new Bus());
+  app.bind(Router).toSelf().inSingletonScope();
+  app.bind(WebviewProvider).toSelf().inSingletonScope();
 
   // Watch for webview registration event
   app

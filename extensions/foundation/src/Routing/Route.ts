@@ -36,7 +36,6 @@ export class Route {
 
   protected compileParameterNames() {
     const names = this.uri.match(/\{(.*?)\}/g) || [];
-
     return names.map((item) => item.slice(1, -1).replace(/\?$/, ""));
   }
 }

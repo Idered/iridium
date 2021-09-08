@@ -38,6 +38,7 @@ export default defineComponent({
       if (this.height <= 28) return 13;
       if (this.height <= 32) return 14;
       if (this.height <= 40) return 16;
+      if (this.height <= 48) return 18;
       return 16;
     },
   },
