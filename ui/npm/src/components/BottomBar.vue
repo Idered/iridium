@@ -84,12 +84,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { computed, defineComponent, inject, PropType } from "vue";
 import semver from "semver";
 import { Package } from "../types";
-import { useVSCode } from "../../../shared/helpers/use-vscode";
 import { API } from "../api";
-import { emit } from "process";
+import { VSCode } from "@shared/helpers/use-vscode";
 
 export default defineComponent({
   name: "BottomBar",
@@ -109,7 +108,8 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const vscode = useVSCode();
+    // FIXME: Move this up
+    const vscode = inject<VSCode>("vscode") as VSCode;
     const outdatedDependencies = computed(() => {
       return props.installedPackages.filter((item) => {
         return semver.lt(
@@ -138,7 +138,7 @@ export default defineComponent({
     const showUpdateConfirmation = async () => {
       if (latestPackages.value.length === 0) return;
 
-      const res = await vscode.fetch.post("/update-confirmation");
+      const res = await vscode?.fetch.post("/update-confirmation");
 
       if (res === "Update all") {
         let dependencies = latestPackages.value

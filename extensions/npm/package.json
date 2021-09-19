@@ -34,7 +34,12 @@
     "email": "support@kasper.io"
   },
   "keywords": [
-    "npm"
+    "npm",
+    "yarn",
+    "pnpm",
+    "node modules",
+    "node",
+    "node dependencies"
   ],
   "repository": {
     "type": "git",
@@ -71,7 +76,6 @@
   },
   "dependencies": {
     "@types/uuid": "^8.3.0",
-    "axios": "^0.21.1",
     "cross-spawn": "^7.0.3",
     "foundation": "link:../foundation/foundation",
     "reflect-metadata": "^0.1.13",

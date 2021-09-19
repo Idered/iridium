@@ -1,7 +1,7 @@
 {
   "name": "iridium",
   "displayName": "Iridium",
-  "description": "Nest.js Client",
+  "description": "A set of VS Code extensions",
   "private": true,
   "version": "0.0.1",
   "scripts": {

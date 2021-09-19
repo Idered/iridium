@@ -119,10 +119,16 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
-import { useVSCode } from "@shared/helpers/use-vscode";
-import SelectInput from "@shared/components/SelectInput.vue";
-import Button from "@shared/components/Button.vue";
+import {
+  computed,
+  defineComponent,
+  inject,
+  onBeforeMount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
+import SelectInput from "./components/SelectInput.vue";
 import SearchIcon from "./components/SearchIcon.vue";
 import InstalledItem from "./components/InstalledItem.vue";
 import Stat from "./components/Stat.vue";
@@ -138,6 +144,7 @@ import semver from "semver";
 import BottomBar from "./components/BottomBar.vue";
 import TopBar from "./components/TopBar.vue";
 import SizeSummaryBar from "./components/SizeSummaryBar.vue";
+import { VSCode } from "@shared/helpers/use-vscode";
 
 export default defineComponent({
   name: "MainView",
@@ -145,14 +152,13 @@ export default defineComponent({
     SearchIcon,
     SelectInput,
     InstalledItem,
-    Button,
     Stat,
     TopBar,
     BottomBar,
     SizeSummaryBar,
   },
   setup() {
-    API.setVSCode(useVSCode());
+    API.setVSCode(inject<VSCode>("vscode") as VSCode);
     const query = ref("");
     const searchPosition = ref(0);
     // TODO: Handle degraded services
@@ -289,10 +295,10 @@ export default defineComponent({
         version: packageVersion.value || selected.package.version,
         isDevDependency: dev,
       };
+      query.value = "";
+      installedPackages.value.push(item);
+      installedPackages.value.sort(byTypeAndName);
       withUpdate(item.name, async () => {
-        query.value = "";
-        installedPackages.value.push(item);
-        installedPackages.value.sort(byTypeAndName);
         await API.installPackage({ packages: [item], dev });
       });
     };

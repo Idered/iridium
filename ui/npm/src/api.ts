@@ -1,4 +1,4 @@
-import { VSCode } from "../../shared/helpers/use-vscode";
+import { VSCode } from "@shared/helpers/use-vscode";
 
 export class API {
   private static packageJSON = "";
@@ -38,32 +38,32 @@ export class API {
     packages: { name: string; version: string }[];
     dev?: boolean;
   }) {
-    return this.vscode.fetch.post<void>("/install", {
+    return API.vscode.fetch.post<void>("/install", {
       ...args,
       packageJSON: API.packageJSON,
     });
   }
   static removePackage(args: { name: string }) {
-    return this.vscode.fetch.post<void>("/remove", {
+    return API.vscode.fetch.post<void>("/remove", {
       ...args,
       packageJSON: API.packageJSON,
     });
   }
   static getPackageJSONFiles() {
-    return this.vscode.fetch.get<string[]>("/package-json-files");
+    return API.vscode.fetch.get<string[]>("/package-json-files");
   }
   static swapPackageType(args: {
     name: string;
     dev: boolean;
     version: string;
   }) {
-    return this.vscode.fetch.post<string[]>("/swap", {
+    return API.vscode.fetch.post<string[]>("/swap", {
       ...args,
       packageJSON: API.packageJSON,
     });
   }
   static changeVersion(args: { name: string; version: string }) {
-    return this.vscode.fetch.post<string[]>("/change-version", {
+    return API.vscode.fetch.post<string[]>("/change-version", {
       ...args,
       packageJSON: API.packageJSON,
     });
