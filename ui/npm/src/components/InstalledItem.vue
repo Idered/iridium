@@ -135,7 +135,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from "vue";
-import SelectInput from "@shared/components/SelectInput.vue";
+import SelectInput from "./SelectInput.vue";
 import semver from "semver";
 import Loader from "./Loader.vue";
 import { Package, PackageSizeInfo } from "../types";
