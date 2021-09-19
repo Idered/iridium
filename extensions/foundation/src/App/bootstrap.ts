@@ -15,6 +15,7 @@ export function bootstrap(props: {
 }) {
   const { routes, context, viewId } = props;
 
+  app.bind("app").toConstantValue(app);
   app.bind(VSCodeContext).toConstantValue(context);
   app.bind(Bus).toConstantValue(new Bus());
   app.bind(Router).toSelf().inSingletonScope();
@@ -26,6 +27,7 @@ export function bootstrap(props: {
     .on(WebviewProviderEvents.registered, (webviewView: vscode.WebviewView) => {
       // Attach router to webview
       app.get(Router).registerWebview(webviewView);
+
       routes(app.get(Router));
     });
 
@@ -36,4 +38,6 @@ export function bootstrap(props: {
   );
 
   context.subscriptions.push(webviewSub);
+
+  return app;
 }

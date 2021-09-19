@@ -41,12 +41,13 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const checked = computed(() => props.modelValue.includes(props.value));
-    const onChange = (e) => {
+    const onChange = (e: Event) => {
       let currentValue = [...props.modelValue];
-      if (e.target.checked) {
-        currentValue.push(e.target.value);
+      const target = e.target as HTMLInputElement;
+      if (target?.checked) {
+        currentValue.push(target.value);
       } else {
-        currentValue = currentValue.filter((item) => item !== e.target.value);
+        currentValue = currentValue.filter((item) => item !== target.value);
       }
       emit("update:modelValue", currentValue);
     };

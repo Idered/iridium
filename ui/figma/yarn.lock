@@ -1235,10 +1235,10 @@ vscode-web-custom-data@^0.3.2:
   resolved "https://registry.yarnpkg.com/vscode-web-custom-data/-/vscode-web-custom-data-0.3.3.tgz#9e1f2388c718d6f190038a19d144834a436b876f"
   integrity sha512-orMjjj1r4efP5ocODYZm3orpANakRBsxPZPDoD5UIrFOPKDFtMJQLp6PIH1rb3AYVRD1iYXMhDQoC6tZ+DrigA==
 
-vue-next-select@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/vue-next-select/-/vue-next-select-0.1.3.tgz#ef57c6cc5a95e92c8c34bab142bb3f7325438ee3"
-  integrity sha512-cTZNwlwWxMVWfpmTzfGmCr+8pwIo/V+L4Pu0r63e3iGGFsbrEmyfyWhRIZenk9H6tGseZZBx48PSvVa4CCZUVQ==
+vue-next-select@^2.10.1:
+  version "2.10.1"
+  resolved "https://registry.yarnpkg.com/vue-next-select/-/vue-next-select-2.10.1.tgz#5f1a7fad1b542c249bb33a14b9eec867e964c407"
+  integrity sha512-qyAij4Skz8eWzYiDScrIuz+xChnUsCNomxSdp3yogRB/IWS4uJ5z9SIvbn1uclVdYlQrFEf3f0vu/VYI1FRRIQ==
 
 vue-router@4:
   version "4.0.3"

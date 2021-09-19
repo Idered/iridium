@@ -2,9 +2,12 @@
   "name": "foundation",
   "version": "0.1.0",
   "devDependencies": {
-    "typescript": "^4.1.4"
+    "@types/node": "^16.9.1",
+    "@types/vscode": "^1.60.0",
+    "typescript": "^4.4.3"
   },
   "dependencies": {
-    "vscode": "^1.1.37"
+    "inversify": "^5.1.1",
+    "inversify-logger-middleware": "^3.1.0"
   }
 }

@@ -1,15 +1,45 @@
 <template>
-  <VueNextSelect v-bind="$attrs" @selected="$emit('input', $event)" />
+  <div :class="align">
+    <VueNextSelect
+      :modelValue="modelValue"
+      :options="options"
+      :value-by="valueBy"
+      :label-by="labelBy"
+      :maxHeight="maxHeight"
+      :close-on-select="closeOnSelect"
+      @selected="$emit('update:modelValue', $event)"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import VueNextSelect from "vue-next-select";
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "SelectInput",
+  emits: ["update:modelValue"],
   props: {
-    value: String,
+    modelValue: {
+      type: String,
+      required: true,
+    },
+    closeOnSelect: Boolean,
+    maxHeight: Number,
+    options: {
+      type: Array,
+      required: true,
+    },
+    align: {
+      type: String as PropType<"contain" | "bottom-right">,
+      default: "contain",
+    },
+    labelBy: {
+      type: String,
+    },
+    valueBy: {
+      type: String,
+    },
   },
   components: { VueNextSelect },
 });
@@ -146,7 +176,7 @@ export default defineComponent({
   width: 100%;
   box-sizing: border-box;
   background: transparent;
-  padding: 2px 4px;
+  padding: 4px 4px;
 }
 
 .vue-input > input {
@@ -163,7 +193,6 @@ export default defineComponent({
 }
 
 .vue-input > input::placeholder {
-  /* color: var(--vscode-input-foreground); */
   color: var(--vscode-input-placeholderForeground);
 }
 
@@ -180,21 +209,34 @@ export default defineComponent({
 }
 
 .vue-dropdown {
+  display: none;
   position: absolute;
   background: var(--vscode-input-background);
   z-index: 40;
-  max-height: 300px;
   overflow-y: auto;
-  left: -1px;
   top: 100% !important;
   min-width: 100%;
-  right: -1px;
-  min-width: 0;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   border: 1px solid var(--vscode-focusBorder);
   list-style-type: none;
+}
+
+.vue-select[aria-expanded="true"] .vue-dropdown {
+  display: block;
+}
+
+.contain .vue-dropdown {
+  left: -1px;
+  right: -1px;
+}
+
+.bottom-right {
+  position: relative;
+}
+.bottom-right .vue-dropdown {
+  right: -1px;
 }
 
 .vue-dropdown[data-visible-length="0"] {
@@ -203,6 +245,7 @@ export default defineComponent({
 
 .vue-dropdown-item {
   list-style-type: none;
+  line-height: 1.25;
   padding: 4px;
   cursor: pointer;
   white-space: nowrap;

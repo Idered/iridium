@@ -52,6 +52,8 @@ export default defineComponent({
   height: var(--height);
   font-size: var(--fontSize);
   border: 0;
+  display: inline-flex;
+  align-items: center;
   color: var(--vscode-button-foreground);
   background: var(--vscode-button-background);
 }

@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, PropType } from "vue";
 import Checkbox from "./Checkbox.vue";
 
 export default defineComponent({
@@ -28,7 +28,12 @@ export default defineComponent({
   emits: ["update:modelValue"],
   props: {
     options: {
-      type: Array,
+      type: Array as PropType<
+        {
+          value: string;
+          label: string;
+        }[]
+      >,
       required: false,
       default: () => [],
     },
@@ -37,7 +42,7 @@ export default defineComponent({
     itemClass: String,
   },
   setup(props, { emit }) {
-    const handleChange = (e) => {
+    const handleChange = (e: Event) => {
       emit("update:modelValue", e);
     };
     return { handleChange };

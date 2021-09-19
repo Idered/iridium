@@ -7,11 +7,11 @@ import { VSCodeContext } from "../App/VSCodeContext";
 @injectable()
 export class Router {
   private routes = [] as Route[];
-  private container = new Container();
 
-  constructor(@inject(VSCodeContext) private context: VSCodeContext) {
-    this.container.bind(VSCodeContext).toConstantValue(context);
-  }
+  constructor(
+    private context: VSCodeContext,
+    @inject("app") private container: Container
+  ) {}
 
   public get(uri: string, action: RouteAction) {
     return this.addRoute("GET", uri, action);

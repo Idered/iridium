@@ -6,11 +6,16 @@
   "version": "0.0.1",
   "scripts": {
     "vscode:prepublish": "tsc --build",
-    "dev:database": "concurrently \"yarn --cwd extensions\/database dev\" \"yarn --cwd ui\/database dev\"",
-    "dev:figma": "concurrently \"yarn --cwd extensions\/figma dev\" \"yarn --cwd ui\/figma dev\""
+    "dev:database": "concurrently \"yarn --cwd extensions/database dev\" \"yarn --cwd ui/database dev\"",
+    "dev:figma": "concurrently \"yarn --cwd extensions/figma dev\" \"yarn --cwd ui/figma dev\"",
+    "dev:npm": "concurrently \"yarn --cwd extensions/npm dev\" \"yarn --cwd ui/npm dev\""
   },
+  "workspaces": [
+    "./extensions/*",
+    "./ui/*"
+  ],
   "dependencies": {
     "concurrently": "^5.3.0",
-    "typescript": "^4.1.3"
+    "typescript": "^4.4.3"
   }
 }

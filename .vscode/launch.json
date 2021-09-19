@@ -30,6 +30,17 @@
         "${workspaceFolder}/extensions/figma/out/ui/**/*.js"
       ],
       "preLaunchTask": "dev:figma"
+    },
+    {
+      "name": "Run Iridium: NPM",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}/extensions/npm"],
+      "outFiles": [
+        "${workspaceFolder}/extensions/npm/out/**/*.js",
+        "${workspaceFolder}/extensions/npm/out/ui/**/*.js"
+      ],
+      "preLaunchTask": "dev:npm"
     }
   ]
 }

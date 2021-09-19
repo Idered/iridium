@@ -1,0 +1,12 @@
+{
+  "name": "iridium-shared",
+  "version": "0.1.0",
+  "dependencies": {
+    "uuid": "^8.3.2",
+    "vue": "^3.2.11",
+    "vue-next-select": "^2.10.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^8.3.1"
+  }
+}
