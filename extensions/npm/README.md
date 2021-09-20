@@ -7,6 +7,7 @@
 - 🚀 Detect outdated dependencies and easily update
 - 📦 Manage multiple package.json files in monorepo
 - 🔢 Analyze size and load speed of each dependency
+- 🧶 Support for `npm`, `yarn` and `pnpm`
 
 ## Usage
 
@@ -16,6 +17,11 @@ Search field shortcuts:
 - `Alt+Enter | Alt+Click` - Install selected package as dev dependency
 - `@` - Display list of package versions
 - `@@` - Display list of tagged package versions
+
+
+### Config
+
+- `iridium.npm.packageManager` - `npm`(default), `yarn`, `pnpm`
 
 ### Installing latest package version
 
