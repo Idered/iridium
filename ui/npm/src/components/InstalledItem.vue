@@ -289,6 +289,11 @@ export default defineComponent({
   pointer-events: all;
 }
 
+.item:hover .version {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .size-info {
   display: grid;
   grid-column: 1/4;
