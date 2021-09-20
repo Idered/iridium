@@ -27,7 +27,10 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
       localResourceRoots: [this.context.extensionUri],
     };
-    webviewView.webview.html = contentProvider.getContent(this.context);
+    webviewView.webview.html = contentProvider.getContent(
+      this.context,
+      webviewView
+    );
     this.bus.emit(WebviewProviderEvents.registered, webviewView);
   }
 }
