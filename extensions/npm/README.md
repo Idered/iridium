@@ -37,7 +37,7 @@ To install specific package version, add `@` after package name - list of versio
 
 Outdated packages are marked by colored package version. Additional command is available for such packages - `upgrade to latest` ![](https://i.imgur.com/s5gasQG.png) which you can access by hovering specified package.
 
-![](https://i.imgur.com/ICVvyzt.gif)
+![](https://i.imgur.com/Vk21sxS.gif)
 
 > **TIP**: To update all outdated packages to latest versions, use sync icon in bottom bar.
 
