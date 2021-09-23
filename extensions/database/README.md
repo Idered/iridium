@@ -1,6 +1,6 @@
 ## Iridium — Database
 
-> Manage your database from VS Code sidebar.
+> Manage your PostgreSQL database from VS Code sidebar.
 
 ### Edit data
 
