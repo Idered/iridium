@@ -28,10 +28,17 @@ export class YarnClient extends Client {
     }, []);
   }
   install({ isDev, query }: { query: string; isDev?: boolean }) {
-    const args = ["add", ...query.split(" "), "-E"];
+    const args = ["add", ...query.split(" ")];
     if (isDev) {
       args.push("--dev");
     }
+    spawn.sync("yarn", args, {
+      stdio: "inherit",
+      cwd: this.#cwd,
+    });
+  }
+  update({ query }: { query: string }) {
+    const args = ["upgrade", ...query.split(" ")];
     spawn.sync("yarn", args, {
       stdio: "inherit",
       cwd: this.#cwd,
@@ -54,7 +61,6 @@ export class YarnClient extends Client {
         "add",
         `${args.packageName}@${args.version}`,
         args.isDev ? "" : "-D",
-        "-E",
       ].filter(Boolean),
       {
         stdio: "inherit",

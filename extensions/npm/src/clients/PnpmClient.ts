@@ -28,10 +28,17 @@ export class PnpmClient extends Client {
     }, []);
   }
   install({ isDev, query }: { query: string; isDev?: boolean }) {
-    const args = ["add", ...query.split(" "), "-E"];
+    const args = ["add", ...query.split(" ")];
     if (isDev) {
       args.push("-D");
     }
+    spawn.sync("pnpm", args, {
+      stdio: "inherit",
+      cwd: this.#cwd,
+    });
+  }
+  update({ query }: { query: string }) {
+    const args = ["update", ...query.split(" ")];
     spawn.sync("pnpm", args, {
       stdio: "inherit",
       cwd: this.#cwd,
@@ -44,17 +51,12 @@ export class PnpmClient extends Client {
     });
   }
   swapType(args: { packageName: string; isDev?: boolean; version?: string }) {
-    // spawn.sync("pnpm", ["remove", args.packageName], {
-    //   stdio: "inherit",
-    //   cwd: this.#cwd,
-    // });
     spawn.sync(
       "pnpm",
       [
         "add",
         `${args.packageName}@${args.version}`,
         args.isDev ? "-P" : "-D",
-        "-E",
       ].filter(Boolean),
       {
         stdio: "inherit",

@@ -27,18 +27,16 @@
       />
     </svg>
 
-    <span>{{ item.name }}</span>
+    <span class="name">{{ item.name }}</span>
 
-    <span>
-      <span
-        v-if="view === View.Manage"
-        class="version"
-        :class="{
-          'version--update-available': isUpdateAvailable,
-        }"
-        >{{ displayVersion }}</span
-      >
-    </span>
+    <span
+      v-if="view === View.Manage"
+      class="version"
+      :class="{
+        'version--update-available': hasAvailableUpdate,
+      }"
+      >{{ displayVersion }}</span
+    >
 
     <div class="overlay">
       <SelectInput
@@ -46,19 +44,16 @@
         :model-value="coercedVersion"
         @update:model-value="handleVersionChange"
         :options="versions"
-        :maxHeight="180"
-        close-on-select
         placeholder="Select version"
-        align="bottom-right"
       />
 
       <a
-        v-if="isUpdateAvailable"
+        v-if="hasAvailableUpdate"
         role="button"
         class="action"
         tabindex="0"
-        :title="`Update to ${tags.latest}`"
-        @click="updatePackageToLatest"
+        :title="`Update to ${maxSatisfyingVersion}`"
+        @click="updatePackageToMaxSatisfying"
       >
         <svg
           width="16"
@@ -134,7 +129,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 import SelectInput from "./SelectInput.vue";
 import semver from "semver";
 import Loader from "./Loader.vue";
@@ -146,7 +141,7 @@ import { View } from "../enums";
 export default defineComponent({
   components: { SelectInput, Loader, Stat },
   name: "InstalledItem",
-  emits: ["remove", "changeVersion", "swapType"],
+  emits: ["remove", "changeVersion", "swapType", "update"],
   props: {
     view: {
       type: Number,
@@ -173,11 +168,13 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const coercedVersion = computed(
-      () => semver.coerce(props.item.version)?.raw || "0.0.0"
+      () =>
+        semver.minSatisfying(props.versions, props.item.version) ||
+        semver.coerce(props.item.version)?.raw ||
+        "0.0.0"
     );
-    const isUpdateAvailable = computed(() => {
-      if (!props.tags.latest) return false;
-      return semver.lt(coercedVersion.value, props.tags.latest);
+    const hasAvailableUpdate = computed(() => {
+      return maxSatisfyingVersion.value !== coercedVersion.value;
     });
     const isUpdating = computed(() => {
       return props.updatingPackages.has(props.item.name);
@@ -191,11 +188,11 @@ export default defineComponent({
     const swapPackageType = () => {
       emit("swapType", props.item);
     };
-    const updatePackageToLatest = () => {
-      emit("changeVersion", {
-        item: props.item,
-        version: props.tags.latest,
-      });
+    const maxSatisfyingVersion = computed(() => {
+      return semver.maxSatisfying(props.versions, props.item.version);
+    });
+    const updatePackageToMaxSatisfying = () => {
+      emit("update", { item: props.item });
     };
     const handleVersionChange = (newVersion: string) => {
       emit("changeVersion", {
@@ -203,14 +200,16 @@ export default defineComponent({
         version: newVersion,
       });
     };
+
     return {
       View,
       displayVersion,
-      isUpdateAvailable,
+      hasAvailableUpdate,
       isUpdating,
       coercedVersion,
+      maxSatisfyingVersion,
       handleVersionChange,
-      updatePackageToLatest,
+      updatePackageToMaxSatisfying,
       formatSize,
       formatTime,
       swapPackageType,
@@ -236,8 +235,37 @@ export default defineComponent({
   color: var(--vscode-list-hoverForeground);
 }
 
+.item :deep(.multiselect) {
+  position: static;
+  overflow: hidden;
+  justify-content: space-between;
+}
+.item :deep(.multiselect-dropdown) {
+  left: 0.75rem;
+  right: 0.75rem;
+}
+.item :deep(.multiselect-single-label) {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.name {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+}
+
 .version {
   color: var(--vscode-descriptionForeground);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
+  max-width: 100px;
 }
 
 .version--update-available {
@@ -246,22 +274,22 @@ export default defineComponent({
 
 .overlay {
   padding: 0 0.75rem;
-  background: var(--vscode-list-hoverBackground);
+  background: var(--vscode-panel-background);
   position: absolute;
   opacity: 0;
   top: 0;
   bottom: 0;
+  left: 0;
   right: 0;
-  display: grid;
-  grid-auto-flow: column;
+  z-index: 10;
+  display: flex;
   column-gap: 6px;
-  justify-content: flex-end;
   align-items: center;
   pointer-events: none;
 }
 
 .version-input {
-  width: 96px;
+  flex-grow: 1;
 }
 
 .action {

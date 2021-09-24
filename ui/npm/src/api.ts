@@ -68,6 +68,20 @@ export class API {
       packageJSON: API.packageJSON,
     });
   }
+  static updatePackages(args: { packages: { name: string }[] }) {
+    return API.vscode.fetch.post<string[]>("/update", {
+      ...args,
+      packageJSON: API.packageJSON,
+    });
+  }
+  static updatePackage(name: string) {
+    return API.updatePackages({ packages: [{ name }] });
+  }
+  static getConfig() {
+    return API.vscode.fetch.get<{
+      showAnalyzeTab: boolean;
+    }>("/config");
+  }
 }
 
 export type GetInstalledPackagesResponse = {

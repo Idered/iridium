@@ -20,7 +20,6 @@ export default class ContentProvider {
         <script type="module" src="http://localhost:3000/@vite/client"></script>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iridium &mdash; Database</title>
     </head>
     <body>
       <div id="app"></div>
@@ -56,7 +55,6 @@ export default class ContentProvider {
         <meta charset="UTF-8">
         <link href="${cssURI}" rel="stylesheet"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iridium &mdash; Database</title>
     </head>
     <body>
       <div id="app"></div>

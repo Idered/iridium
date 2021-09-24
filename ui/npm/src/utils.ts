@@ -1,3 +1,5 @@
+import { inject, InjectionKey, Ref } from "vue";
+
 /**
  * @link https://github.com/pastelsky/bundlephobia/blob/28bde79bad73cd1ba0797889f2b77d11aac3424c/utils/index.js#L11
  */
@@ -53,4 +55,14 @@ export const getTimeFromSize = (sizeInBytes: number) => {
     slow4G: sizeInBytes / 1024 / DownloadSpeed.SLOW_4G,
     fast4G: sizeInBytes / 1024 / DownloadSpeed.FAST_4G,
   };
+};
+
+export const configKey: InjectionKey<
+  Ref<{
+    showAnalyzeTab: boolean;
+  }>
+> = Symbol();
+
+export const useConfig = () => {
+  return inject(configKey);
 };

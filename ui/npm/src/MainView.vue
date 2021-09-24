@@ -1,14 +1,16 @@
 <template>
   <div
     class="container"
-    @mouseleave="hideAutoComplete"
+    @mouseleaves="hideAutoComplete"
     @click="hideAutoComplete"
+    @contextmenu.prevent
   >
     <div>
       <TopBar :view="view" @navigate="view = $event" />
 
       <div class="header">
         <SelectInput
+          v-if="packageJSONFiles.length > 1"
           v-model="packageJSON"
           :options="packageJSONFiles"
           close-on-select
@@ -21,11 +23,11 @@
             :value="query"
             placeholder="Add dependency"
             @click.stop
-            @input="handleSearchInput"
+            @input="handleSearchInput($event)"
             @keyup.left.exact="handleSearchPositionChange"
             @keyup.right.exact="handleSearchPositionChange"
             @keydown.esc.exact.stop="hideAutoComplete"
-            @keydown.enter.exact.stop="addPackage"
+            @keydown.enter.exact.stop="addPackage()"
             @keydown.alt.enter.exact.stop="addPackage({ dev: true })"
             @keydown.prevent.up="goUp"
             @keydown.prevent.down="goDown"
@@ -40,46 +42,60 @@
         <div>Slow 4G</div>
       </div>
 
-      <div
-        class="results"
-        v-if="packageSuggestions.length"
-        @click.stop
-        ref="resultsRef"
-      >
-        <div
-          v-if="showVersionSuggestions"
-          v-for="(item, i) in displayedVersions"
-          :key="item.version"
-          class="results__item"
-          :class="{ 'is-active': i === highlight }"
-          @click.exact.stop="addPackage"
-          @click.exact.stop.alt="addPackage({ dev: true })"
-          @mouseenter="highlightItem(i)"
-        >
-          <div class="results__item--version">
-            <span class="results__item-title" v-text="item.version" />
-            <span class="results__item-tag" v-text="item.tag" />
+      <div class="results" v-if="packageSuggestions.length" @click.stop>
+        <div class="results__content" ref="resultsRef">
+          <div
+            v-if="showVersionSuggestions"
+            v-for="(item, i) in displayedVersions"
+            :key="item.version"
+            class="results__item"
+            :class="{ 'is-active': i === highlight }"
+            @click.exact.stop="addPackage()"
+            @click.exact.stop.alt="addPackage({ dev: true })"
+            @mouseenter="highlightItem(i)"
+          >
+            <div class="results__item--version">
+              <span class="results__item-title" v-text="item.version" />
+              <span class="results__item-tag" v-text="item.tag" />
+            </div>
+          </div>
+
+          <div
+            v-else
+            v-for="(item, i) in packageSuggestions"
+            :key="item.package.name"
+            class="results__item"
+            :class="{ 'is-active': i === highlight }"
+            @click.exact.stop="addPackage()"
+            @click.exact.stop.alt="addPackage({ dev: true })"
+            @mouseenter="highlightItem(i)"
+          >
+            <div>
+              <span
+                class="results__item-title"
+                v-html="item.highlight || item.package.name"
+              />@{{ item.package.version }}
+            </div>
+            <div class="results__item-description">
+              {{ item.package.description }}
+            </div>
           </div>
         </div>
 
-        <div
-          v-else
-          v-for="(item, i) in packageSuggestions"
-          :key="item.package.name"
-          class="results__item"
-          :class="{ 'is-active': i === highlight }"
-          @click.exact.stop="addPackage"
-          @click.exact.stop.alt="addPackage({ dev: true })"
-          @mouseenter="highlightItem(i)"
-        >
-          <div>
-            <span
-              class="results__item-title"
-              v-html="item.highlight || item.package.name"
-            />@{{ item.package.version }}
+        <div class="results__shortcuts">
+          <div class="results__shortcut">
+            <div>Show versions</div>
+            <div class="results__shortcut-keys"><kbd>@</kbd></div>
           </div>
-          <div class="results__item-description">
-            {{ item.package.description }}
+          <div class="results__shortcut">
+            <div>Show tags</div>
+            <div class="results__shortcut-keys"><kbd>@</kbd><kbd>@</kbd></div>
+          </div>
+          <div class="results__shortcut">
+            <div>Add as devDependency</div>
+            <div class="results__shortcut-keys">
+              <kbd>Alt</kbd><kbd>Enter</kbd>
+            </div>
           </div>
         </div>
       </div>
@@ -87,17 +103,18 @@
 
     <div class="installed">
       <InstalledItem
-        @changeVersion="handleChangeVersion"
-        @remove="handleRemovePackage"
-        @swapType="handleSwapType"
+        v-for="item in displayedPackages"
+        :key="item.name"
         :updatingPackages="updatingPackages"
         :tags="installedPackagesTags[item.name]"
         :versions="installedPackagesVersions[item.name]"
         :view="view"
         :item="item"
-        v-for="item in displayedPackages"
-        :key="item.name"
         :size-info="sizeInfo[item.name]"
+        @update="handleUpdatePackage"
+        @changeVersion="handleChangeVersion"
+        @remove="handleRemovePackage"
+        @swapType="handleSwapType"
       />
     </div>
 
@@ -109,8 +126,7 @@
 
     <BottomBar
       v-if="view === View.Manage"
-      @update-start="handleUpdateAllStart"
-      @update-end="handleUpdateAllEnd"
+      @update-all="handleUpdateAll"
       :installed-packages="installedPackages"
       :installed-packages-tags="installedPackagesTags"
       :installed-packages-versions="installedPackagesVersions"
@@ -123,8 +139,8 @@ import {
   computed,
   defineComponent,
   inject,
-  onBeforeMount,
   onMounted,
+  provide,
   ref,
   watch,
 } from "vue";
@@ -133,7 +149,7 @@ import SearchIcon from "./components/SearchIcon.vue";
 import InstalledItem from "./components/InstalledItem.vue";
 import Stat from "./components/Stat.vue";
 import { Package, PackageSizeInfo } from "./types";
-import { getTimeFromSize } from "./utils";
+import { configKey, getTimeFromSize } from "./utils";
 import {
   API,
   GetPackageVersionsAndTagsResponse,
@@ -160,9 +176,11 @@ export default defineComponent({
   setup() {
     API.setVSCode(inject<VSCode>("vscode") as VSCode);
     const query = ref("");
+    const config = ref({
+      showAnalyzeTab: true,
+    });
+    provide(configKey, config);
     const searchPosition = ref(0);
-    // TODO: Handle degraded services
-    const degradedServices = ref([]);
     const packageJSON = ref<string>("");
     const packageJSONFiles = ref<string[]>([]);
     const searchInput = ref<HTMLInputElement>();
@@ -233,17 +251,15 @@ export default defineComponent({
       return installedPackages.value.map((item) => item.version).join("");
     });
     const updatingPackages = ref<Set<string>>(new Set([]));
-    const handleUpdateAllStart = (list: string[]) => {
-      list.forEach((name) => {
-        updatingPackages.value.add(name);
-      });
+    const handleUpdateAll = (packages: Package[]) => {
+      withUpdate(
+        packages.map((item) => item.name),
+        async () => {
+          await API.updatePackages({ packages });
+        }
+      );
     };
-    const handleUpdateAllEnd = (list: string[]) => {
-      list.forEach((name) => {
-        updatingPackages.value.delete(name);
-      });
-    };
-    const handleSearchInput = (e: KeyboardEvent) => {
+    const handleSearchInput = (e: Event) => {
       const target = e.target as HTMLInputElement;
       query.value = target.value;
       searchPosition.value = target.selectionStart || 0;
@@ -286,18 +302,20 @@ export default defineComponent({
       const isInstalled = installedPackages.value.some(
         (item) => item.name === selected.package.name
       );
-      if (isInstalled) {
-        query.value = "";
-        return;
-      }
+      // if (isInstalled) {
+      //   query.value = "";
+      //   return;
+      // }
       const item = {
         name: selected.package.name,
         version: packageVersion.value || selected.package.version,
         isDevDependency: dev,
       };
       query.value = "";
-      installedPackages.value.push(item);
-      installedPackages.value.sort(byTypeAndName);
+      if (!isInstalled) {
+        installedPackages.value.push(item);
+        installedPackages.value.sort(byTypeAndName);
+      }
       withUpdate(item.name, async () => {
         await API.installPackage({ packages: [item], dev });
       });
@@ -311,12 +329,20 @@ export default defineComponent({
       });
     };
     const withUpdate = async (
-      packageName: string,
+      packageName: string | string[],
       callback: () => Promise<void>
     ) => {
-      updatingPackages.value.add(packageName);
+      if (Array.isArray(packageName)) {
+        packageName.forEach((name) => updatingPackages.value.add(name));
+      } else {
+        updatingPackages.value.add(packageName);
+      }
       await callback();
-      updatingPackages.value.delete(packageName);
+      if (Array.isArray(packageName)) {
+        packageName.forEach((name) => updatingPackages.value.delete(name));
+      } else {
+        updatingPackages.value.delete(packageName);
+      }
     };
     const handleSwapType = async (item: Package) => {
       withUpdate(item.name, async () => {
@@ -347,6 +373,16 @@ export default defineComponent({
           ...change.item,
           version: change.version,
         });
+      });
+    };
+    const handleUpdatePackage = (change: { item: Package }) => {
+      withUpdate(change.item.name, async () => {
+        await API.updatePackage(change.item.name);
+        // const index = installedPackages.value.indexOf(change.item);
+        // installedPackages.value.splice(index, 1, {
+        //   ...change.item,
+        //   version: change.version,
+        // });
       });
     };
     const hideAutoComplete = () => {
@@ -386,6 +422,9 @@ export default defineComponent({
       packageJSONFiles.value = await API.getPackageJSONFiles();
       return packageJSONFiles.value;
     };
+    const getConfig = async () => {
+      config.value = await API.getConfig();
+    };
     const loadPackagesSizeInfo = async () => {
       sizeInfo.value = {};
       for (const item of displayedPackages.value) {
@@ -398,6 +437,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      await getConfig();
       const [uri] = await getPackageJSONFiles();
       packageJSON.value = uri;
     });
@@ -462,6 +502,9 @@ export default defineComponent({
         await getPackageJSONFiles();
         getPackages();
       }
+      if (message.data?.type === "CONFIG_UPDATED") {
+        await getConfig();
+      }
     });
 
     return {
@@ -482,8 +525,8 @@ export default defineComponent({
       installedPackagesVersions,
       installedPackagesTags,
       updatingPackages,
-      handleUpdateAllStart,
-      handleUpdateAllEnd,
+      handleUpdatePackage,
+      handleUpdateAll,
       handleSearchPositionChange,
       goUp,
       goDown,
@@ -510,8 +553,8 @@ export default defineComponent({
 .header {
   display: grid;
   align-items: center;
-  row-gap: 8px;
-  margin: 12px 12px 0;
+  row-gap: 0.5rem;
+  margin: 0 0.75rem 0;
 }
 
 .search-input {
@@ -548,19 +591,55 @@ export default defineComponent({
 
 .results {
   transform: translateY(4px);
-  left: 12px;
-  right: 12px;
+  left: 0.75rem;
+  right: 0.75rem;
   z-index: 10;
   position: absolute;
   color: var(--vscode-dropdown-foreground);
   background: var(--vscode-dropdown-background);
   border: 1px solid var(--vscode-dropdown-border);
   box-sizing: border-box;
+}
+
+.results__content {
   max-height: 280px;
   overflow-y: auto;
 }
+.results__shortcuts {
+  /* background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground); */
+  border-top: 1px solid var(--vscode-input-border);
+  display: grid;
+  padding: 0.25rem 0.75rem;
+  row-gap: 0.25rem;
+  font-size: 12px;
+}
+.results__shortcut {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-weight: 500;
+  color: var(--vscode-descriptionForeground);
+}
+.results__shortcut-keys {
+  display: flex;
+  column-gap: 0.25rem;
+}
+.results__shortcut-keys kbd {
+  all: unset;
+  border: 1px solid var(--vscode-input-border);
+  color: var(--vscode-foreground);
+  height: 20px;
+  border-radius: 3px;
+  padding: 0 0.25rem;
+  line-height: 20px;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 12px;
+}
 .results__item {
-  padding: 8px 16px;
+  padding: 0.5rem 0.75rem;
   cursor: pointer;
 }
 .results__item--version {
@@ -578,7 +657,7 @@ export default defineComponent({
 .results__item-description {
   color: var(--vscode-descriptionForeground);
   margin-top: 4px;
-  word-break: break-all;
+  word-wrap: break-word;
 }
 .results__item-tag {
   color: var(--vscode-descriptionForeground);

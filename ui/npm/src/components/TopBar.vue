@@ -1,5 +1,5 @@
 <template>
-  <div class="top-bar">
+  <div class="top-bar" v-if="config?.showAnalyzeTab">
     <div class="top-bar__item" variant="secondary" :height="32">
       <a
         tabindex="-1"
@@ -25,8 +25,9 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
 import { View } from "../enums";
+import { useConfig } from "../utils";
 
 export default defineComponent({
   name: "TopBar",
@@ -38,7 +39,8 @@ export default defineComponent({
     },
   },
   setup() {
-    return { View };
+    const config = useConfig();
+    return { View, config };
   },
 });
 </script>
@@ -46,6 +48,7 @@ export default defineComponent({
 .top-bar {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  margin-bottom: 0.75rem;
   border-top: 1px solid var(--vscode-panel-border);
   border-bottom: 1px solid var(--vscode-panel-border);
 }

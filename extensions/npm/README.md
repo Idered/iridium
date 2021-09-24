@@ -18,10 +18,10 @@ Search field shortcuts:
 - `@` - Display list of package versions
 - `@@` - Display list of tagged package versions
 
-
 ### Config
 
-- `iridium.npm.packageManager` - `npm`(default), `yarn`, `pnpm`
+- `iridium.npm.packageManager` - **`npm`**, `yarn`, `pnpm`
+- `iridium.npm.showAnalyzeTab` - **`true`**, `false`
 
 ### Installing latest package version
 

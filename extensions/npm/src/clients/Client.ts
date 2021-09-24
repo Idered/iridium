@@ -10,6 +10,7 @@ export abstract class Client {
     isDevDependency: boolean;
   }[];
   abstract install(args: { query: string; isDev?: boolean }): void;
+  abstract update(args: { query: string }): void;
   abstract remove(packageName: string): void;
   abstract swapType(args: {
     packageName: string;

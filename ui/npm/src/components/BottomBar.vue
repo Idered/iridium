@@ -4,7 +4,7 @@
       <a
         class="bottom-bar__item-link"
         role="button"
-        :title="`${dependencyCount} dev ${
+        :title="`${dependencyCount} ${
           dependencyCount === 1 ? 'dependency' : 'dependencies'
         }`"
       >
@@ -92,14 +92,14 @@ import { VSCode } from "@shared/helpers/use-vscode";
 
 export default defineComponent({
   name: "BottomBar",
-  emits: ["updateStart", "updateEnd"],
+  emits: ["updateStart", "updateEnd", "updateAll"],
   props: {
     installedPackages: {
       type: Array as PropType<Package[]>,
       required: true,
     },
     installedPackagesTags: {
-      type: Object,
+      type: Object as PropType<Record<string, { latest?: string }>>,
       required: true,
     },
     installedPackagesVersions: {
@@ -110,17 +110,6 @@ export default defineComponent({
   setup(props, { emit }) {
     // FIXME: Move this up
     const vscode = inject<VSCode>("vscode") as VSCode;
-    const outdatedDependencies = computed(() => {
-      return props.installedPackages.filter((item) => {
-        return semver.lt(
-          semver.coerce(item.version)?.raw || "0.0.0",
-          props.installedPackagesTags[item.name]?.latest || "0.0.0"
-        );
-      });
-    });
-    const outdatedCount = computed(() => {
-      return outdatedDependencies.value.length;
-    });
     const dependencyCount = computed(() => {
       return props.installedPackages.reduce((count, item) => {
         return item.isDevDependency ? count : count + 1;
@@ -129,6 +118,23 @@ export default defineComponent({
     const devDependencyCount = computed(() => {
       return props.installedPackages.length - dependencyCount.value;
     });
+    const outdatedDependencies = computed(() => {
+      return props.installedPackages.filter((item) => {
+        const versions = props.installedPackagesVersions[item.name] || [];
+        const coercedVersion =
+          semver.minSatisfying(versions, item.version) ||
+          semver.coerce(item.version)?.raw ||
+          "0.0.0";
+        const maxSatisfyingVersion = semver.maxSatisfying(
+          versions,
+          item.version
+        );
+        return maxSatisfyingVersion !== coercedVersion;
+      });
+    });
+    const outdatedCount = computed(() => {
+      return outdatedDependencies.value.length;
+    });
     const latestPackages = computed(() => {
       return outdatedDependencies.value.map((item) => ({
         ...item,
@@ -136,36 +142,12 @@ export default defineComponent({
       }));
     });
     const showUpdateConfirmation = async () => {
-      if (latestPackages.value.length === 0) return;
+      if (outdatedCount.value === 0) return;
 
       const res = await vscode?.fetch.post("/update-confirmation");
 
       if (res === "Update all") {
-        let dependencies = latestPackages.value
-          .filter((item) => !item.isDevDependency)
-          .map((item) => item.name);
-        let devDependencies = latestPackages.value
-          .filter((item) => item.isDevDependency)
-          .map((item) => item.name);
-        if (dependencies.length > 0) {
-          emit("updateStart", dependencies);
-          await API.installPackage({
-            packages: latestPackages.value.filter(
-              (item) => !item.isDevDependency
-            ),
-          });
-          emit("updateEnd", dependencies);
-        }
-        if (devDependencies.length > 0) {
-          emit("updateStart", devDependencies);
-          await API.installPackage({
-            packages: latestPackages.value.filter(
-              (item) => item.isDevDependency
-            ),
-            dev: true,
-          });
-          emit("updateEnd", devDependencies);
-        }
+        emit("updateAll", outdatedDependencies.value);
       }
     };
 

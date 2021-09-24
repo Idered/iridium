@@ -1,5 +1,5 @@
 import { Controller } from "foundation/Routing/Controller";
-import { Uri, window, workspace } from "vscode";
+import { window, workspace } from "vscode";
 import { inject } from "foundation";
 import { ClientManager } from "../clients/ClientManager";
 import { relative } from "path";
@@ -38,6 +38,19 @@ export class PackageJsonController extends Controller {
     return {};
   }
 
+  async updatePackages(data: {
+    packages: { name: string }[];
+    packageJSON: string;
+  }) {
+    const query = data.packages
+      .map((item) => {
+        return item.name;
+      })
+      .join(" ");
+    this.clientManager.getClient(data.packageJSON).update({ query });
+    return {};
+  }
+
   async removePackage(data: { name: string; packageJSON: string }) {
     this.clientManager.getClient(data.packageJSON).remove(data.name);
     return {};
@@ -70,7 +83,7 @@ export class PackageJsonController extends Controller {
 
   async showUpdateConfirmation() {
     return await window.showInformationMessage(
-      "You are about to update all packages. Are you sure you want to continue?",
+      "You are about to update all packages to their latest versions based on the specified ranges. Are you sure you want to continue?",
       {
         modal: true,
       },

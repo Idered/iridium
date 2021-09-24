@@ -34,7 +34,12 @@ export function bootstrap(props: {
   // Init webview loading
   const webviewSub = vscode.window.registerWebviewViewProvider(
     viewId,
-    app.get(WebviewProvider)
+    app.get(WebviewProvider),
+    {
+      webviewOptions: {
+        retainContextWhenHidden: true,
+      },
+    }
   );
 
   context.subscriptions.push(webviewSub);

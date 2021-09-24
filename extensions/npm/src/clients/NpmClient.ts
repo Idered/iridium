@@ -28,10 +28,17 @@ export class NpmClient extends Client {
     }, []);
   }
   install({ isDev, query }: { isDev?: boolean; query: string }) {
-    const args = ["install", ...query.split(" "), "-E"];
+    const args = ["install", ...query.split(" ")];
     if (isDev) {
       args.push("--save-dev");
     }
+    spawn.sync("npm", args, {
+      stdio: "inherit",
+      cwd: this.#cwd,
+    });
+  }
+  update({ query }: { query: string }) {
+    const args = ["update", ...query.split(" ")];
     spawn.sync("npm", args, {
       stdio: "inherit",
       cwd: this.#cwd,
@@ -50,7 +57,6 @@ export class NpmClient extends Client {
         "install",
         `${args.packageName}@${args.version}`,
         args.isDev ? "--save-prod" : "--save-dev",
-        "-E",
       ],
       {
         stdio: "inherit",

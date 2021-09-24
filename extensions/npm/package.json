@@ -1,6 +1,6 @@
 {
   "name": "npm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "./out/extension.js",
   "license": "MIT",
   "scripts": {
@@ -49,8 +49,17 @@
     "onView:iridium.npm"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "iridium",
+          "title": "Iridium",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "iridium": [
         {
           "type": "webview",
           "id": "iridium.npm",
@@ -70,6 +79,10 @@
           ],
           "default": "npm",
           "description": "The package manager used to install packages."
+        },
+        "iridium.npm.showAnalyzeTab": {
+          "type": "boolean",
+          "default": true
         }
       }
     }

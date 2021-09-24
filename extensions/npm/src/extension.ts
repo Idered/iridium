@@ -35,6 +35,9 @@ export function activate(context: vscode.ExtensionContext) {
 
         context.subscriptions.push(watcher);
       }
+      vscode.workspace.onDidChangeConfiguration(() => {
+        webviewView.webview.postMessage({ type: "CONFIG_UPDATED" });
+      });
     });
 }
 

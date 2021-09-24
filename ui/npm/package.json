@@ -6,6 +6,7 @@
     "build": "vue-tsc --noEmit && vite build"
   },
   "dependencies": {
+    "@vueform/multiselect": "^2.2.0",
     "semver": "7.3.5",
     "uuid": "^8.3.2",
     "vue": "^3.2.11",

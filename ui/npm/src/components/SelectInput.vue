@@ -1,50 +1,164 @@
 <template>
-  <div :class="align">
-    <VueNextSelect
-      :modelValue="modelValue"
-      :options="options"
-      :value-by="valueBy"
-      :label-by="labelBy"
-      :maxHeight="maxHeight"
-      :close-on-select="closeOnSelect"
-      @selected="$emit('update:modelValue', $event)"
-    />
-  </div>
+  <Multiselect
+    ref="select"
+    :modelValue="modelValue"
+    :options="options"
+    :canClear="false"
+    :canDeselect="false"
+    @click.prevent.stop="handleClose"
+    @select="$emit('update:modelValue', $event)"
+  >
+    <template #caret>
+      <svg
+        class="caret"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M7.97612 10.0719L12.3334 5.7146L12.9521 6.33332L8.28548 11L7.66676 11L3.0001 6.33332L3.61882 5.7146L7.97612 10.0719Z"
+          fill="#C5C5C5"
+        />
+      </svg>
+    </template>
+  </Multiselect>
 </template>
 
 <script lang="ts">
-import VueNextSelect from "vue-next-select";
-import { defineComponent, PropType } from "vue";
+import Multiselect from "@vueform/multiselect";
+import { defineComponent, PropType, ref } from "vue";
 
 export default defineComponent({
   name: "SelectInput",
   emits: ["update:modelValue"],
-  components: { VueNextSelect },
+  components: { Multiselect },
   props: {
     modelValue: {
       type: String,
       required: true,
     },
-    closeOnSelect: Boolean,
-    maxHeight: Number,
     options: {
-      type: Array,
+      type: Array as PropType<string[]>,
       required: true,
     },
-    align: {
-      type: String as PropType<"contain" | "bottom-right">,
-      default: "contain",
-    },
-    labelBy: {
-      type: String,
-    },
-    valueBy: {
-      type: String,
-    },
+  },
+  setup() {
+    const select = ref<any>();
+    const isOpen = ref(false);
+    const handleClose = () => {
+      isOpen.value = !isOpen.value;
+      if (isOpen.value) {
+        select.value?.open();
+      } else {
+        select.value?.close();
+      }
+    };
+    return { isOpen, handleClose, select };
   },
 });
 </script>
 
+<style src="@vueform/multiselect/themes/default.css"></style>
+<style>
+.caret {
+  margin-right: 0.5rem;
+}
+:root {
+  --ms-font-size: var(--vscode-font-size);
+  --ms-line-height: 1.231;
+  --ms-bg: var(--vscode-input-background);
+  --ms-bg-disabled: #f3f4f6;
+  --ms-border-color: var(--vscode-input-border);
+  --ms-border-width: 1px;
+  --ms-radius: 0;
+  --ms-py: 0.3125rem;
+  --ms-px: 0.75rem;
+  --ms-ring-width: -1px;
+  --ms-ring-color: var(--vscode-focusBorder);
+  --ms-placeholder-color: #9ca3af;
+  --ms-max-height: 10rem;
+
+  --ms-spinner-color: #10b981;
+  --ms-caret-color: #999999;
+  --ms-clear-color: #999999;
+  --ms-clear-color-hover: #000000;
+
+  --ms-tag-font-size: var(--vscode-font-size);
+  --ms-tag-line-height: 1.25rem;
+  --ms-tag-font-weight: 600;
+  --ms-tag-bg: #10b981;
+  --ms-tag-bg-disabled: #9ca3af;
+  --ms-tag-color: #ffffff;
+  --ms-tag-color-disabled: #ffffff;
+  --ms-tag-radius: 4px;
+  --ms-tag-py: 0.125rem;
+  --ms-tag-px: 0.5rem;
+  --ms-tag-my: 0.25rem;
+  --ms-tag-mx: 0.25rem;
+
+  --ms-tag-remove-radius: 4px;
+  --ms-tag-remove-py: 0.25rem;
+  --ms-tag-remove-px: 0.25rem;
+  --ms-tag-remove-my: 0rem;
+  --ms-tag-remove-mx: 0.125rem;
+
+  --ms-dropdown-bg: var(--vscode-input-background);
+  --ms-dropdown-border-color: var(--vscode-input-border);
+  --ms-dropdown-border-width: 1px;
+  --ms-dropdown-radius: 0;
+
+  --ms-group-label-py: 0.3rem;
+  --ms-group-label-px: 0.75rem;
+  --ms-group-label-line-height: 1.375;
+  --ms-group-label-bg-pointed: #d1d5db;
+  --ms-group-label-color-pointed: #374151;
+  --ms-group-label-bg-disabled: #f3f4f6;
+  --ms-group-label-color-disabled: #d1d5db;
+  --ms-group-label-bg-selected: #059669;
+  --ms-group-label-color-selected: #ffffff;
+  --ms-group-label-bg-selected-pointed: #0c9e70;
+  --ms-group-label-color-selected-pointed: #ffffff;
+  --ms-group-label-bg-selected-disabled: #75cfb1;
+  --ms-group-label-color-selected-disabled: #d1fae5;
+
+  --ms-option-font-size: var(--vscode-font-size);
+  --ms-option-line-height: 1;
+  --ms-option-bg-pointed: var(--vscode-list-activeSelectionBackground);
+  --ms-option-bg-selected: var(--vscode-list-activeSelectionBackground);
+  --ms-option-bg-disabled: #ffffff;
+  --ms-option-bg-selected-pointed: var(--vscode-list-activeSelectionBackground);
+  --ms-option-bg-selected-disabled: #ffffff;
+  --ms-option-color-pointed: var(--vscode-list-activeSelectionForeground);
+  --ms-option-color-selected: var(--vscode-list-activeSelectionForeground);
+  --ms-option-color-disabled: #d1d5db;
+  --ms-option-color-selected-pointed: var(--vscode-list-focusForeground);
+  --ms-option-color-selected-disabled: #d1fae5;
+  --ms-option-py: 0.225rem;
+  --ms-option-px: 0.75rem;
+
+  --ms-empty-color: #4b5563;
+}
+.multiselect {
+  justify-content: space-between;
+}
+.multiselect-dropdown {
+}
+.multiselect-single-label {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.multiselect-option {
+  white-space: nowrap;
+}
+</style>
+<!-- 
 <style>
 .icon.delete {
   display: flex;
@@ -215,6 +329,7 @@ export default defineComponent({
   z-index: 40;
   overflow-y: auto;
   top: 100% !important;
+  left: -1px;
   min-width: 100%;
   margin: 0;
   padding: 0;
@@ -299,4 +414,4 @@ export default defineComponent({
     transform: rotate(360deg);
   }
 }
-</style>
+</style> -->
