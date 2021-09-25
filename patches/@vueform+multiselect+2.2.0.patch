@@ -1,0 +1,13 @@
+diff --git a/node_modules/@vueform/multiselect/src/Multiselect.d.ts b/node_modules/@vueform/multiselect/src/Multiselect.d.ts
+index 894b8c5..852789d 100644
+--- a/node_modules/@vueform/multiselect/src/Multiselect.d.ts
++++ b/node_modules/@vueform/multiselect/src/Multiselect.d.ts
+@@ -1,6 +1,6 @@
+-import Vue,{ VNode } from 'vue';
++import Vue, { VNode, defineComponent } from 'vue';
+ 
+-declare class Multiselect extends Vue {
++declare class Multiselect implements ReturnType<typeof defineComponent> {
+   modelValue?: any;
+   value?: any;
+   mode: 'single'|'multiple'|'tags';
