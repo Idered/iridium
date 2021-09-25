@@ -131,7 +131,9 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from "vue";
 import SelectInput from "./SelectInput.vue";
-import semver from "semver";
+import maxSatisfying from "semver/ranges/max-satisfying";
+import minSatisfying from "semver/ranges/min-satisfying";
+import coerce from "semver/functions/coerce";
 import Loader from "./Loader.vue";
 import { Package, PackageSizeInfo } from "../types";
 import { formatSize, formatTime } from "../utils";
@@ -169,12 +171,15 @@ export default defineComponent({
   setup(props, { emit }) {
     const coercedVersion = computed(
       () =>
-        semver.minSatisfying(props.versions, props.item.version) ||
-        semver.coerce(props.item.version)?.raw ||
+        minSatisfying(props.versions, props.item.version) ||
+        coerce(props.item.version)?.raw ||
         "0.0.0"
     );
     const hasAvailableUpdate = computed(() => {
-      return maxSatisfyingVersion.value !== coercedVersion.value;
+      return (
+        typeof maxSatisfyingVersion.value === "string" &&
+        maxSatisfyingVersion.value !== coercedVersion.value
+      );
     });
     const isUpdating = computed(() => {
       return props.updatingPackages.has(props.item.name);
@@ -189,7 +194,7 @@ export default defineComponent({
       emit("swapType", props.item);
     };
     const maxSatisfyingVersion = computed(() => {
-      return semver.maxSatisfying(props.versions, props.item.version);
+      return maxSatisfying(props.versions, props.item.version);
     });
     const updatePackageToMaxSatisfying = () => {
       emit("update", { item: props.item });

@@ -156,7 +156,7 @@ import {
   GetSuggestionsResponse,
 } from "./api";
 import { View } from "./enums";
-import semver from "semver";
+import coerce from "semver/functions/coerce";
 import BottomBar from "./components/BottomBar.vue";
 import TopBar from "./components/TopBar.vue";
 import SizeSummaryBar from "./components/SizeSummaryBar.vue";
@@ -486,7 +486,7 @@ export default defineComponent({
       installedPackagesVersions.value = {};
       installedPackagesTags.value = {};
       for (const item of packages) {
-        const ver = semver.coerce(item.version)?.raw;
+        const ver = coerce(item.version)?.raw;
         if (ver) {
           installedPackagesVersions.value[item.name] = [ver];
         }

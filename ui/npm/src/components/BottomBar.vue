@@ -85,7 +85,9 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject, PropType } from "vue";
-import semver from "semver";
+import maxSatisfying from "semver/ranges/max-satisfying";
+import minSatisfying from "semver/ranges/min-satisfying";
+import coerce from "semver/functions/coerce";
 import { Package } from "../types";
 import { API } from "../api";
 import { VSCode } from "@shared/helpers/use-vscode";
@@ -122,14 +124,14 @@ export default defineComponent({
       return props.installedPackages.filter((item) => {
         const versions = props.installedPackagesVersions[item.name] || [];
         const coercedVersion =
-          semver.minSatisfying(versions, item.version) ||
-          semver.coerce(item.version)?.raw ||
+          minSatisfying(versions, item.version) ||
+          coerce(item.version)?.raw ||
           "0.0.0";
-        const maxSatisfyingVersion = semver.maxSatisfying(
-          versions,
-          item.version
+        const maxSatisfyingVersion = maxSatisfying(versions, item.version);
+        return (
+          typeof maxSatisfyingVersion === "string" &&
+          maxSatisfyingVersion !== coercedVersion
         );
-        return maxSatisfyingVersion !== coercedVersion;
       });
     });
     const outdatedCount = computed(() => {
