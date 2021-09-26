@@ -201,7 +201,7 @@ export default defineComponent({
       return coerce(version)?.major;
     });
     const showActions = computed(() => {
-      return /^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
+      return !/^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
         props.item.version
       );
     });
