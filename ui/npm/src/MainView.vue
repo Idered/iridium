@@ -1,5 +1,9 @@
 <template>
+  <div class="empty" v-if="packageJSONFiles.length === 0">
+    No package.json files found.
+  </div>
   <div
+    v-if="packageJSONFiles.length !== 0"
     class="container"
     @mouseleaves="hideAutoComplete"
     @click="hideAutoComplete"
@@ -18,6 +22,7 @@
         <label class="search-input" v-if="view === View.Manage">
           <SearchIcon />
           <input
+            tabindex="0"
             ref="searchInput"
             type="text"
             :value="query"
@@ -378,11 +383,6 @@ export default defineComponent({
     const handleUpdatePackage = (change: { item: Package }) => {
       withUpdate(change.item.name, async () => {
         await API.updatePackage(change.item.name);
-        // const index = installedPackages.value.indexOf(change.item);
-        // installedPackages.value.splice(index, 1, {
-        //   ...change.item,
-        //   version: change.version,
-        // });
       });
     };
     const hideAutoComplete = () => {
@@ -428,6 +428,7 @@ export default defineComponent({
     const loadPackagesSizeInfo = async () => {
       sizeInfo.value = {};
       for (const item of displayedPackages.value) {
+        if (/^file|^link|^http/.test(item.version)) continue;
         getPackageSizeInfo(item.name, item.version, item.isDevDependency).then(
           (res) => {
             if (res) sizeInfo.value[res.name] = res;
@@ -437,6 +438,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      searchInput.value?.focus();
       await getConfig();
       const [uri] = await getPackageJSONFiles();
       packageJSON.value = uri;
@@ -685,5 +687,9 @@ export default defineComponent({
   grid-template-columns: 1fr 1fr 1fr 1fr;
   margin: 12px 12px 0;
   justify-items: flex-end;
+}
+
+.empty {
+  padding: 0.75rem 1.25rem;
 }
 </style>

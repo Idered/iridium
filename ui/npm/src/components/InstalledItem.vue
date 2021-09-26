@@ -1,5 +1,13 @@
 <template>
-  <div class="item">
+  <div
+    class="item"
+    tabindex="0"
+    @keydown.up.exact="focusPrev"
+    @keydown.down.exact="focusNext"
+    @keydown.delete.exact="handleDelete"
+    @keydown.ctrl.enter.exact.prevent="updatePackageToMaxSatisfying"
+    @keydown.ctrl.shift.enter.exact.prevent="updatePackageToLatest"
+  >
     <Loader v-if="isUpdating" />
     <svg
       v-else
@@ -35,11 +43,21 @@
       :class="{
         'version--update-available': hasAvailableUpdate,
       }"
-      >{{ displayVersion }}</span
     >
+      <span v-if="/\d\.\d\.\d/.test(displayVersion)">
+        <span class="major" :class="{ 'has-major-update': hasMajorUpdate }">
+          {{ displayVersion.split(".")[0] }}
+        </span>
+        <span class="rest"
+          >.{{ displayVersion.split(".").slice(1).join(".") }}
+        </span>
+      </span>
+      <span v-else>{{ displayVersion }}</span>
+    </span>
 
-    <div class="overlay">
+    <div class="overlay" v-if="showActions">
       <SelectInput
+        tabindex="-1"
         class="version-input"
         :model-value="coercedVersion"
         @update:model-value="handleVersionChange"
@@ -51,7 +69,7 @@
         v-if="hasAvailableUpdate"
         role="button"
         class="action"
-        tabindex="0"
+        tabindex="-1"
         :title="`Update to ${maxSatisfyingVersion}`"
         @click="updatePackageToMaxSatisfying"
       >
@@ -74,7 +92,7 @@
       <a
         role="button"
         class="action"
-        tabindex="0"
+        tabindex="-1"
         title="Change dependency type"
         @click="swapPackageType"
       >
@@ -99,7 +117,7 @@
       <a
         role="button"
         class="action"
-        tabindex="0"
+        tabindex="-1"
         title="Delete"
         @click="$emit('remove', item)"
       >
@@ -175,6 +193,27 @@ export default defineComponent({
         coerce(props.item.version)?.raw ||
         "0.0.0"
     );
+    const currentMajor = computed(() => coerce(props.item.version)?.major);
+    const latestMajor = computed(() => {
+      const version = props.versions.find(
+        (item) =>
+          !/^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket|^gitlab:/.test(
+            item
+          )
+      );
+      return coerce(version)?.major;
+    });
+    const showActions = computed(() => {
+      return /^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket|^gitlab:/.test(
+        props.item.version
+      );
+    });
+    const hasMajorUpdate = computed(
+      () =>
+        typeof latestMajor.value === "number" &&
+        typeof currentMajor.value === "number" &&
+        latestMajor.value > currentMajor.value
+    );
     const hasAvailableUpdate = computed(() => {
       return (
         typeof maxSatisfyingVersion.value === "string" &&
@@ -199,6 +238,10 @@ export default defineComponent({
     const updatePackageToMaxSatisfying = () => {
       emit("update", { item: props.item });
     };
+    const updatePackageToLatest = () => {
+      if (!props.tags.latest) return;
+      handleVersionChange(props.tags.latest);
+    };
     const handleVersionChange = (newVersion: string) => {
       emit("changeVersion", {
         item: props.item,
@@ -206,7 +249,33 @@ export default defineComponent({
       });
     };
 
+    const focusPrev = (event: KeyboardEvent) => {
+      const target = event.target as HTMLDivElement;
+      const prev = target.previousElementSibling as HTMLDivElement;
+      prev?.focus();
+    };
+
+    const focusNext = (event: KeyboardEvent) => {
+      const target = event.target as HTMLDivElement;
+      const next = target.nextElementSibling as HTMLDivElement;
+      next?.focus();
+    };
+
+    const handleDelete = (event: KeyboardEvent) => {
+      const target = event.target as HTMLDivElement;
+      const next = target.nextElementSibling as HTMLDivElement;
+      const prev = target.previousElementSibling as HTMLDivElement;
+      next?.focus();
+      if (!next) prev?.focus();
+      emit("remove", props.item);
+    };
+
     return {
+      showActions,
+      hasMajorUpdate,
+      handleDelete,
+      focusPrev,
+      focusNext,
       View,
       displayVersion,
       hasAvailableUpdate,
@@ -215,6 +284,7 @@ export default defineComponent({
       maxSatisfyingVersion,
       handleVersionChange,
       updatePackageToMaxSatisfying,
+      updatePackageToLatest,
       formatSize,
       formatTime,
       swapPackageType,
@@ -225,6 +295,7 @@ export default defineComponent({
 
 <style scoped>
 .item {
+  margin: 1px;
   padding: 5px 0.75rem;
   line-height: 18px;
   display: grid;
@@ -233,6 +304,10 @@ export default defineComponent({
   column-gap: 8px;
   justify-content: space-between;
   position: relative;
+}
+
+.item:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
 }
 
 .item:hover {
@@ -332,5 +407,9 @@ export default defineComponent({
   grid-column: 1/4;
   margin-top: 4px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.has-major-update {
+  color: var(--vscode-list-highlightForeground);
 }
 </style>

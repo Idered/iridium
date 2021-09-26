@@ -128,12 +128,12 @@ export default defineComponent({
   --ms-option-font-size: var(--vscode-font-size);
   --ms-option-line-height: 1;
   --ms-option-bg-pointed: var(--vscode-list-activeSelectionBackground);
-  --ms-option-bg-selected: var(--vscode-list-activeSelectionBackground);
+  --ms-option-bg-selected: transparent;
   --ms-option-bg-disabled: #ffffff;
   --ms-option-bg-selected-pointed: var(--vscode-list-activeSelectionBackground);
   --ms-option-bg-selected-disabled: #ffffff;
   --ms-option-color-pointed: var(--vscode-list-activeSelectionForeground);
-  --ms-option-color-selected: var(--vscode-list-activeSelectionForeground);
+  --ms-option-color-selected: inherit;
   --ms-option-color-disabled: #d1d5db;
   --ms-option-color-selected-pointed: var(--vscode-list-focusForeground);
   --ms-option-color-selected-disabled: #d1fae5;
@@ -145,7 +145,18 @@ export default defineComponent({
 .multiselect {
   justify-content: space-between;
 }
+.multiselect.is-open {
+  border-color: var(--vscode-focusBorder);
+}
+.multiselect.is-open .multiselect-dropdown {
+  border-color: var(--vscode-focusBorder);
+}
 .multiselect-dropdown {
+  padding: 1px;
+  transform: none;
+  bottom: auto;
+  top: 100%;
+  overflow-y: auto;
 }
 .multiselect-single-label {
   position: relative;
@@ -156,6 +167,14 @@ export default defineComponent({
 }
 .multiselect-option {
   white-space: nowrap;
+  border: 1px solid transparent;
+}
+.multiselect-option.is-selected {
+  white-space: nowrap;
+}
+.multiselect-option.is-pointed {
+  white-space: nowrap;
+  border-color: var(--vscode-focusBorder);
 }
 </style>
 <!-- 

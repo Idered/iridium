@@ -17,6 +17,11 @@ Search field shortcuts:
 - `Alt+Enter | Alt+Click` - Install selected package as dev dependency
 - `@` - Display list of package versions
 - `@@` - Display list of tagged package versions
+- 
+Shortcuts while focus is on installed package:
+- `Del` - Remove package
+- `Ctrl+Enter` - Update package to latest version based on the specified range
+- `Ctrl+Shift+Enter` - Update package to latest
 
 ### Config
 
