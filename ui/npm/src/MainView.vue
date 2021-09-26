@@ -428,7 +428,12 @@ export default defineComponent({
     const loadPackagesSizeInfo = async () => {
       sizeInfo.value = {};
       for (const item of displayedPackages.value) {
-        if (/^file|^link|^http/.test(item.version)) continue;
+        if (
+          /^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
+            item.version
+          )
+        )
+          continue;
         getPackageSizeInfo(item.name, item.version, item.isDevDependency).then(
           (res) => {
             if (res) sizeInfo.value[res.name] = res;

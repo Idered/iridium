@@ -196,15 +196,12 @@ export default defineComponent({
     const currentMajor = computed(() => coerce(props.item.version)?.major);
     const latestMajor = computed(() => {
       const version = props.versions.find(
-        (item) =>
-          !/^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket|^gitlab:/.test(
-            item
-          )
+        (item) => !/alpha|beta|experimental|pre/.test(item)
       );
       return coerce(version)?.major;
     });
     const showActions = computed(() => {
-      return /^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket|^gitlab:/.test(
+      return /^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
         props.item.version
       );
     });
