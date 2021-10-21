@@ -9,17 +9,20 @@
     "vscode:prepublish": "tsc --build",
     "dev:database": "concurrently \"yarn --cwd extensions/database dev\" \"yarn --cwd ui/database dev\"",
     "dev:figma": "concurrently \"yarn --cwd extensions/figma dev\" \"yarn --cwd ui/figma dev\"",
+    "dev:deploy": "concurrently \"yarn --cwd extensions/deploy dev\" \"yarn --cwd ui/deploy dev\"",
     "dev:npm": "concurrently \"yarn --cwd extensions/npm dev\" \"yarn --cwd ui/npm dev\""
   },
   "workspaces": [
+    "./ui/npm",
     "./extensions/npm",
-    "./extensions/foundation",
-    "./ui/npm"
+    "./ui/deploy",
+    "./extensions/deploy",
+    "./extensions/foundation"
   ],
   "dependencies": {
     "concurrently": "^5.3.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.4"
   }
 }

@@ -5,7 +5,6 @@ export type Package = {
 };
 
 export type PackageSizeInfo = {
-  isDevDependency: boolean;
   name: string;
   size: number;
   gzip: number;

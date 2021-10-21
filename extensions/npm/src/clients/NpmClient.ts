@@ -44,8 +44,8 @@ export class NpmClient extends Client {
       cwd: this.#cwd,
     });
   }
-  remove(packageName: string) {
-    spawn.sync("npm", ["remove", packageName], {
+  remove({ packages }: { packages: string[] }) {
+    spawn.sync("npm", ["remove", ...packages], {
       stdio: "inherit",
       cwd: this.#cwd,
     });

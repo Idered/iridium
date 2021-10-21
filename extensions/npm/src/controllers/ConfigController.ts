@@ -6,6 +6,7 @@ export class ConfigController extends Controller {
     const config = workspace.getConfiguration("iridium.npm");
     return {
       showAnalyzeTab: config.get("showAnalyzeTab"),
+      showProTab: config.get("showProTab"),
     };
   }
 }

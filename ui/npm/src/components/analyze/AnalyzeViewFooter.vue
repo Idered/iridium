@@ -1,5 +1,5 @@
 <template>
-  <div class="size-summary-bar">
+  <div class="analyze-view-footer">
     <Stat :value="totalMinSize" type="size" label="Min" />
     <Stat :value="totalGZIPSize" type="size" label="Min + GZIP" />
     <Stat
@@ -16,12 +16,12 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { PackageSizeInfo } from "../types";
-import { getTimeFromSize } from "../utils";
-import Stat from "./Stat.vue";
+import { PackageSizeInfo } from "../../types";
+import { getTimeFromSize } from "../../lib/utils";
+import Stat from "../Stat.vue";
 
 export default defineComponent({
-  name: "SizeSummaryBar",
+  name: "AnalyzeViewFooter",
   components: { Stat },
   props: {
     sizeInfo: {
@@ -32,13 +32,13 @@ export default defineComponent({
   setup(props) {
     const totalMinSize = computed(() => {
       return Object.values(props.sizeInfo).reduce(
-        (total, item) => total + (item.isDevDependency ? 0 : item.size || 0),
+        (total, item) => total + item.size,
         0
       );
     });
     const totalGZIPSize = computed(() => {
       return Object.values(props.sizeInfo).reduce(
-        (total, item) => total + (item.isDevDependency ? 0 : item.gzip || 0),
+        (total, item) => total + item.gzip,
         0
       );
     });
@@ -47,7 +47,7 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.size-summary-bar {
+.analyze-view-footer {
   padding: 0.5rem 0.75rem;
   line-height: 22px;
   font-size: 12px;

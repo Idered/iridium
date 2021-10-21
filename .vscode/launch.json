@@ -41,6 +41,19 @@
         "${workspaceFolder}/extensions/npm/out/ui/**/*.js"
       ],
       "preLaunchTask": "dev:npm"
+    },
+    {
+      "name": "Run Iridium: Deploy",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/extensions/deploy"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/extensions/deploy/out/**/*.js",
+        "${workspaceFolder}/extensions/deploy/out/ui/**/*.js"
+      ],
+      "preLaunchTask": "dev:deploy"
     }
   ]
 }

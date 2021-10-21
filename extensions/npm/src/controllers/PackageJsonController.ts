@@ -1,8 +1,9 @@
 import { Controller } from "foundation/Routing/Controller";
-import { window, workspace } from "vscode";
+import { Uri, window, workspace } from "vscode";
 import { inject } from "foundation";
 import { ClientManager } from "../clients/ClientManager";
-import { relative } from "path";
+import { dirname, relative } from "path";
+import depcheck from "./unimported-fn";
 
 export class PackageJsonController extends Controller {
   @inject(ClientManager) private clientManager: ClientManager;
@@ -51,9 +52,25 @@ export class PackageJsonController extends Controller {
     return {};
   }
 
-  async removePackage(data: { name: string; packageJSON: string }) {
-    this.clientManager.getClient(data.packageJSON).remove(data.name);
+  async removePackage(data: { packages: string[]; packageJSON: string }) {
+    this.clientManager
+      .getClient(data.packageJSON)
+      .remove({ packages: data.packages });
     return {};
+  }
+
+  async runDepCheck(data: { packageJSON: string }) {
+    const path = Uri.joinPath(
+      workspace.workspaceFolders[0].uri,
+      data.packageJSON
+    ).fsPath;
+
+    try {
+      const result = await depcheck(dirname(path));
+      return { status: "success", result };
+    } catch (err) {
+      return { status: "error" };
+    }
   }
 
   async swapPackageType(data: {

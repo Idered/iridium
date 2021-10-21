@@ -32,7 +32,17 @@ export function activate(context: vscode.ExtensionContext) {
         watcher.onDidChange(notify);
         watcher.onDidDelete(notify);
         watcher.onDidCreate(notify);
-
+        context.subscriptions.push(watcher);
+      }
+      if (vscode.workspace.workspaceFolders) {
+        let watcher = vscode.workspace.createFileSystemWatcher(
+          "**/.unimportedrc.json"
+        );
+        const notify = () =>
+          webviewView.webview.postMessage({ type: "UNIMPORTEDRC_UPDATED" });
+        watcher.onDidChange(notify);
+        watcher.onDidDelete(notify);
+        watcher.onDidCreate(notify);
         context.subscriptions.push(watcher);
       }
       vscode.workspace.onDidChangeConfiguration(() => {

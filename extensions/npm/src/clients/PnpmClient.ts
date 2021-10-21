@@ -44,8 +44,8 @@ export class PnpmClient extends Client {
       cwd: this.#cwd,
     });
   }
-  remove(packageName: string) {
-    spawn.sync("pnpm", ["remove", packageName], {
+  remove({ packages }: { packages: string[] }) {
+    spawn.sync("pnpm", ["remove", ...packages], {
       stdio: "inherit",
       cwd: this.#cwd,
     });

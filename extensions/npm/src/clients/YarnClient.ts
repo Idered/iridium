@@ -44,8 +44,8 @@ export class YarnClient extends Client {
       cwd: this.#cwd,
     });
   }
-  remove(packageName: string) {
-    spawn.sync("yarn", ["remove", packageName], {
+  remove({ packages }: { packages: string[] }) {
+    spawn.sync("yarn", ["remove", ...packages], {
       stdio: "inherit",
       cwd: this.#cwd,
     });

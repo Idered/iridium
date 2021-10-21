@@ -1,12 +1,12 @@
 <template>
   <div class="stat">
-    <span>{{ value }}</span> <span>{{ unit }}</span>
+    <span class="value">{{ value }}</span> <span class="unit">{{ unit }}</span>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { formatSize, formatTime } from "../utils";
+import { formatSize, formatTime } from "../lib/utils";
 export default defineComponent({
   name: "Stat",
   props: {
@@ -42,5 +42,13 @@ export default defineComponent({
 .stat {
   text-align: right;
   line-height: 1;
+}
+.value {
+  font-weight: bold;
+  color: var(--vscode-foreground);
+}
+.unit {
+  font-weight: 400;
+  color: var(--vscode-descriptionForeground);
 }
 </style>

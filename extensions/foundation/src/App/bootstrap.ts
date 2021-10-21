@@ -7,6 +7,7 @@ import {
 } from "../Webview/WebviewProvider";
 import app from "./App";
 import { VSCodeContext } from "./VSCodeContext";
+import { VSCodeWebView } from "./VSCodeWebView";
 
 export function bootstrap(props: {
   viewId: string;
@@ -27,6 +28,7 @@ export function bootstrap(props: {
     .on(WebviewProviderEvents.registered, (webviewView: vscode.WebviewView) => {
       // Attach router to webview
       app.get(Router).registerWebview(webviewView);
+      app.bind(VSCodeWebView).toConstantValue(webviewView.webview);
 
       routes(app.get(Router));
     });

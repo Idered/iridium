@@ -1,10 +1,20 @@
 import { VSCode } from "@shared/helpers/use-vscode";
+import { getTypingsPackageName } from "./utils";
+
+export class ResponseError extends Error {
+  constructor(message: string, public readonly response: Response) {
+    super(message);
+  }
+}
 
 export class API {
   private static packageJSON = "";
   private static async request<Response>(url: string, options?: RequestInit) {
     const response = await fetch(url, options);
     const json = await response.json();
+    if (!response.ok) {
+      throw new ResponseError(response.statusText, response);
+    }
     return json as unknown as Response;
   }
   private static vscode: VSCode;
@@ -14,9 +24,24 @@ export class API {
   static setVSCode(vscode: VSCode) {
     API.vscode = vscode;
   }
+
   static getSuggestions(query: string) {
     return API.request<GetSuggestionsResponse>(
       `https://api.npms.io/v2/search/suggestions?q=${encodeURI(query)}&size=4`
+    );
+  }
+
+  static getTypings(packages: string[]) {
+    const types = packages.map(getTypingsPackageName);
+    return API.request<GetTypingsResponse>(
+      `https://api.npms.io/v2/package/mget`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(types),
+      }
     );
   }
   static getSizeInfo(query: string) {
@@ -43,14 +68,22 @@ export class API {
       packageJSON: API.packageJSON,
     });
   }
-  static removePackage(args: { name: string }) {
+  static removePackages(packages: string[]) {
     return API.vscode.fetch.post<void>("/remove", {
-      ...args,
+      packages,
       packageJSON: API.packageJSON,
     });
   }
   static getPackageJSONFiles() {
     return API.vscode.fetch.get<string[]>("/package-json-files");
+  }
+  static getDepCheck() {
+    return API.vscode.fetch.post<{
+      status: "success" | "error";
+      result: DepCheck;
+    }>("/depcheck", {
+      packageJSON: API.packageJSON,
+    });
   }
   static swapPackageType(args: {
     name: string;
@@ -83,6 +116,13 @@ export class API {
     }>("/config");
   }
 }
+
+export type DepCheck = {
+  clean: boolean;
+  unimported: string[];
+  unresolved: string[];
+  unused: string[];
+};
 
 export type GetInstalledPackagesResponse = {
   name: string;
@@ -157,3 +197,101 @@ export type GetSuggestionsResponse = {
   searchScore: number;
   highlight: string;
 }[];
+
+export interface GetTypingsResponse {
+  [packageName: string]: {
+    analyzedAt: string;
+    collected: {
+      metadata: {
+        name: string;
+        scope: string;
+        version: string;
+        deprecated?: string;
+        description: string;
+        date: string;
+        publisher: {
+          username: string;
+          email: string;
+        };
+        maintainers: {
+          username: string;
+          email: string;
+        }[];
+        contributors: {
+          name: string;
+          url: string;
+        }[];
+        repository: {
+          type: string;
+          url: string;
+          directory: string;
+        };
+        links: {
+          npm: string;
+          homepage: string;
+          repository: string;
+          bugs: string;
+        };
+        license: string;
+        dependencies: Record<string, string>;
+        releases: {
+          from: string;
+          to: string;
+          count: number;
+        }[];
+        readme: string;
+      };
+      npm: {
+        downloads: {
+          from: string;
+          to: string;
+          count: number;
+        }[];
+        dependentsCount: number;
+        starsCount: number;
+      };
+      source: {
+        files: {
+          readmeSize: number;
+          testsSize: number;
+        };
+      };
+    };
+    evaluation: {
+      quality: {
+        carefulness: number;
+        tests: number;
+        health: number;
+        branding: number;
+      };
+      popularity: {
+        communityInterest: number;
+        downloadsCount: number;
+        downloadsAcceleration: number;
+        dependentsCount: number;
+      };
+      maintenance: {
+        releasesFrequency: number;
+        commitsFrequency: number;
+        openIssues: number;
+        issuesDistribution: number;
+      };
+    };
+    error: {
+      unrecoverable: boolean;
+      tarballFile: string;
+      name: string;
+      message: string;
+      stack: string;
+      caughtAt: string;
+    };
+    score: {
+      final: number;
+      detail: {
+        quality: number;
+        popularity: number;
+        maintenance: number;
+      };
+    };
+  };
+}
