@@ -7,3 +7,14 @@ declare module "*.vue" {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+interface ImportMetaEnv
+  extends Readonly<Record<string, string | boolean | undefined>> {
+  readonly VITE_ALGOLIA_APP_ID: string;
+  readonly VITE_ALGOLIA_API_KEY: string;
+  readonly VITE_ALGOLIA_INDEX: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

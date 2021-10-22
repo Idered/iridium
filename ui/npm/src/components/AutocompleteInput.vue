@@ -27,7 +27,11 @@
         v-if="!isLoading && !packageSuggestions.length && !query.length"
         class="results__initial"
       >
-        Start typing to search for a package
+        <div>Start typing to search for a package</div>
+        <div class="results__algolia">
+          <span>Search by</span>
+          <AlgoliaInfo />
+        </div>
       </div>
       <div
         v-if="isLoading && !packageSuggestions.length"
@@ -175,6 +179,7 @@ import { withUpdate } from "../lib/utils";
 import SearchIcon from "./icons/SearchIcon.vue";
 import { ErrorType } from "../enums";
 import Loader from "./Loader.vue";
+import AlgoliaInfo from "./AlgoliaInfo.vue";
 
 enum State {
   Inactive,
@@ -186,6 +191,7 @@ export default defineComponent({
   components: {
     SearchIcon,
     Loader,
+    AlgoliaInfo,
   },
   setup() {
     const store = useStore();
@@ -445,17 +451,26 @@ export default defineComponent({
   box-sizing: border-box;
 }
 .results__initial {
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 0.75rem;
+}
+.results__algolia {
+  margin-top: 0.5rem;
+  display: grid;
+  color: var(--vscode-descriptionForeground);
+  grid-template-columns: auto auto;
+  justify-content: flex-end;
+  column-gap: 0.375rem;
+  align-items: center;
 }
 .results__empty {
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 0.75rem;
 }
 .results__error {
   padding: 0 0.75rem 0.25rem 0.75rem;
   color: var(--vscode-errorForeground);
 }
 .results__loading {
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: 0.25rem;
