@@ -1,5 +1,5 @@
 import { VSCode } from "@shared/helpers/use-vscode";
-import { getTypingsPackageName } from "./utils";
+import algoliasearch from "algoliasearch/lite";
 
 export class ResponseError extends Error {
   constructor(message: string, public readonly response: Response) {
@@ -9,6 +9,10 @@ export class ResponseError extends Error {
 
 export class API {
   private static packageJSON = "";
+  private static algolia = algoliasearch(
+    import.meta.env.VITE_ALGOLIA_APP_ID,
+    import.meta.env.VITE_ALGOLIA_API_KEY
+  ).initIndex(import.meta.env.VITE_ALGOLIA_INDEX);
   private static async request<Response>(url: string, options?: RequestInit) {
     const response = await fetch(url, options);
     const json = await response.json();
@@ -24,25 +28,11 @@ export class API {
   static setVSCode(vscode: VSCode) {
     API.vscode = vscode;
   }
-
   static getSuggestions(query: string) {
-    return API.request<GetSuggestionsResponse>(
-      `https://api.npms.io/v2/search/suggestions?q=${encodeURI(query)}&size=4`
-    );
-  }
-
-  static getTypings(packages: string[]) {
-    const types = packages.map(getTypingsPackageName);
-    return API.request<GetTypingsResponse>(
-      `https://api.npms.io/v2/package/mget`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(types),
-      }
-    );
+    return API.algolia.search<AlgoliaSearchResponse>(query, {
+      analyticsTags: ["idered-vscode"],
+      hitsPerPage: 4,
+    });
   }
   static getSizeInfo(query: string) {
     return API.request<GetSizeInfoResponse>(
@@ -117,6 +107,109 @@ export class API {
   }
 }
 
+export type AlgoliaSearchResponse = {
+  name: string;
+  downloadsLast30Days: number;
+  downloadsRatio: number;
+  humanDownloadsLast30Days: string;
+  popular: boolean;
+  version: string;
+  versions: Record<string, string>;
+  tags: Record<string, string>;
+  description: string;
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+  originalAuthor: {
+    name: string;
+  };
+  repository: any;
+  githubRepo: any;
+  gitHead: any;
+  readme: string;
+  owner: {
+    name: string;
+    email: string;
+    avatar: string;
+    link: string;
+  };
+  deprecated: boolean;
+  isDeprecated: boolean;
+  deprecatedReason: any;
+  homepage: any;
+  license: any;
+  keywords: any[];
+  computedKeywords: any[];
+  computedMetadata: any;
+  created: number;
+  modified: number;
+  lastPublisher: {
+    name: string;
+    email: string;
+    avatar: string;
+    link: string;
+  };
+  owners: {
+    name: string;
+    email: string;
+    avatar: string;
+    link: string;
+  }[];
+  bin: any;
+  types: {
+    definitelyTyped?: "string";
+    ts: boolean | "included" | "definitely-typed";
+  };
+  moduleTypes: string[];
+  styleTypes: string[];
+  lastCrawl: string;
+  _searchInternal: {
+    alternativeNames: string[];
+    expiresAt: number;
+    downloadsMagnitude: number;
+    jsDelivrPopularity: number;
+  };
+  dependents: number;
+  humanDependents: string;
+  changelogFilename: any;
+  jsDelivrHits: number;
+  objectID: string;
+  _highlightResult: {
+    name: {
+      value: string;
+      matchLevel: string;
+      fullyHighlighted: boolean;
+      matchedWords: string[];
+    };
+    description: {
+      value: string;
+      matchLevel: string;
+      matchedWords: any[];
+    };
+    owner: {
+      name: {
+        value: string;
+        matchLevel: string;
+        matchedWords: any[];
+      };
+    };
+    owners: {
+      name: {
+        value: string;
+        matchLevel: string;
+        matchedWords: any[];
+      };
+    }[];
+    _searchInternal: {
+      alternativeNames: {
+        value: string;
+        matchLevel: string;
+        fullyHighlighted?: boolean;
+        matchedWords: string[];
+      }[];
+    };
+  };
+};
+
 export type DepCheck = {
   clean: boolean;
   unimported: string[];
@@ -158,140 +251,4 @@ export interface GetSizeInfoResponse {
   scoped: boolean;
   size: number;
   version: string;
-}
-
-export type GetSuggestionsResponse = {
-  package: {
-    name: string;
-    scope: string;
-    version: string;
-    description: string;
-    keywords: string[];
-    date: string;
-    links: {
-      npm: string;
-      homepage: string;
-      repository: string;
-      bugs: string;
-    };
-    author: {
-      name: string;
-    };
-    publisher: {
-      username: string;
-      email: string;
-    };
-    maintainers: {
-      username: string;
-      email: string;
-    }[];
-  };
-  score: {
-    final: number;
-    detail: {
-      quality: number;
-      popularity: number;
-      maintenance: number;
-    };
-  };
-  searchScore: number;
-  highlight: string;
-}[];
-
-export interface GetTypingsResponse {
-  [packageName: string]: {
-    analyzedAt: string;
-    collected: {
-      metadata: {
-        name: string;
-        scope: string;
-        version: string;
-        deprecated?: string;
-        description: string;
-        date: string;
-        publisher: {
-          username: string;
-          email: string;
-        };
-        maintainers: {
-          username: string;
-          email: string;
-        }[];
-        contributors: {
-          name: string;
-          url: string;
-        }[];
-        repository: {
-          type: string;
-          url: string;
-          directory: string;
-        };
-        links: {
-          npm: string;
-          homepage: string;
-          repository: string;
-          bugs: string;
-        };
-        license: string;
-        dependencies: Record<string, string>;
-        releases: {
-          from: string;
-          to: string;
-          count: number;
-        }[];
-        readme: string;
-      };
-      npm: {
-        downloads: {
-          from: string;
-          to: string;
-          count: number;
-        }[];
-        dependentsCount: number;
-        starsCount: number;
-      };
-      source: {
-        files: {
-          readmeSize: number;
-          testsSize: number;
-        };
-      };
-    };
-    evaluation: {
-      quality: {
-        carefulness: number;
-        tests: number;
-        health: number;
-        branding: number;
-      };
-      popularity: {
-        communityInterest: number;
-        downloadsCount: number;
-        downloadsAcceleration: number;
-        dependentsCount: number;
-      };
-      maintenance: {
-        releasesFrequency: number;
-        commitsFrequency: number;
-        openIssues: number;
-        issuesDistribution: number;
-      };
-    };
-    error: {
-      unrecoverable: boolean;
-      tarballFile: string;
-      name: string;
-      message: string;
-      stack: string;
-      caughtAt: string;
-    };
-    score: {
-      final: number;
-      detail: {
-        quality: number;
-        popularity: number;
-        maintenance: number;
-      };
-    };
-  };
 }

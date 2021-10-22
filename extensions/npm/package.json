@@ -1,6 +1,6 @@
 {
   "name": "npm",
-  "version": "0.3.3",
+  "version": "0.4.2",
   "main": "./out/extension.js",
   "license": "MIT",
   "scripts": {
@@ -16,7 +16,7 @@
     "url": "https://kasper.io"
   },
   "preview": true,
-  "displayName": "Iridium — Node Dependencies",
+  "displayName": "Node Dependencies",
   "publisher": "idered",
   "description": "Node dependency manager.",
   "icon": "resources/marketplace-icon.png",
@@ -39,7 +39,8 @@
     "pnpm",
     "node modules",
     "node",
-    "node dependencies"
+    "node dependencies",
+    "iridium"
   ],
   "repository": {
     "type": "git",
@@ -95,7 +96,6 @@
     "@types/uuid": "^8.3.0",
     "cross-spawn": "^7.0.3",
     "foundation": "link:../foundation/foundation",
-    "read-pkg": "^7.0.0",
     "reflect-metadata": "^0.1.13",
     "ts-loader": "^8.0.14",
     "unimported": "^1.19.1",

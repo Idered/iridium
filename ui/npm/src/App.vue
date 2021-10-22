@@ -51,7 +51,7 @@ import SelectInput from "./components/SelectInput.vue";
 import SearchIcon from "./components/icons/SearchIcon.vue";
 import InstalledItem from "./components/InstalledItem.vue";
 import { Package } from "./types";
-import { getTypingsPackageName, withUpdate } from "./lib/utils";
+import { withUpdate } from "./lib/utils";
 import { API } from "./lib/api";
 import { Order, View } from "./enums";
 import coerce from "semver/functions/coerce";
