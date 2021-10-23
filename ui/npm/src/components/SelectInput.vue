@@ -5,8 +5,8 @@
     :options="options"
     :canClear="false"
     :canDeselect="false"
-    @click.prevent.stop="handleClose"
-    @select="$emit('update:modelValue', $event)"
+    @blur="isOpen = false"
+    @select="handleSelect"
   >
     <template #caret>
       <svg
@@ -46,7 +46,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(_props, { emit }) {
     const select = ref<any>();
     const isOpen = ref(false);
     const handleClose = () => {
@@ -57,7 +57,11 @@ export default defineComponent({
         select.value?.close();
       }
     };
-    return { isOpen, handleClose, select };
+    const handleSelect = (event: Event) => {
+      isOpen.value = false;
+      emit("update:modelValue", event);
+    };
+    return { isOpen, handleClose, select, handleSelect };
   },
 });
 </script>

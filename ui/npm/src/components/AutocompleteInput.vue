@@ -483,11 +483,9 @@ export default defineComponent({
   padding: 1px;
 }
 .results__shortcuts {
-  /* background: var(--vscode-badge-background);
-  color: var(--vscode-badge-foreground); */
   border-top: 1px solid var(--vscode-settings-textInputBorder);
   display: grid;
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   row-gap: 0.25rem;
   font-size: 12px;
 }

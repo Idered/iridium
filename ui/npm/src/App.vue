@@ -14,7 +14,6 @@
           v-if="packageJSONFiles.length > 1"
           v-model="packageJSON"
           :options="packageJSONFiles"
-          close-on-select
         />
         <AnalyzeViewHeader v-if="view === View.Analyze" />
         <AutocompleteInput v-if="view === View.Manage" />
