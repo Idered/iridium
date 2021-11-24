@@ -47,9 +47,17 @@
     "url": "https://github.com/Idered/iridium"
   },
   "activationEvents": [
-    "onView:iridium.npm"
+    "onView:iridium.npm",
+    "onCommand:iridium.openClosestPackageJson"
   ],
   "contributes": {
+    "commands": [
+      {
+        "command": "iridium.openClosestPackageJson",
+        "title": "Open Closest package.json to Current Editor",
+        "category": "Node Dependencies"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {

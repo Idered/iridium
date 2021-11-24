@@ -8,6 +8,7 @@ import { ClientManager } from "./clients/ClientManager";
 import { NpmClient } from "./clients/NpmClient";
 import { YarnClient } from "./clients/YarnClient";
 import { PnpmClient } from "./clients/PnpmClient";
+import { openClosestPackageJson } from "./commands/openClosestPackageJson";
 
 export function activate(context: vscode.ExtensionContext) {
   const app = bootstrap({
@@ -49,6 +50,11 @@ export function activate(context: vscode.ExtensionContext) {
         webviewView.webview.postMessage({ type: "CONFIG_UPDATED" });
       });
     });
+
+  vscode.commands.registerCommand(
+    "iridium.openClosestPackageJson",
+    openClosestPackageJson
+  );
 }
 
 export function deactivate() {}
