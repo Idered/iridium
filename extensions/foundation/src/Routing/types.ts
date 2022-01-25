@@ -1,4 +1,9 @@
-export type RouteAction = [Function, string];
+import { Controller } from "./Controller";
+
+export type RouteAction<T> = [
+  T,
+  T extends new (...args: any[]) => infer R ? keyof R : never
+];
 
 export type RouteRequest = {
   requestId: string;

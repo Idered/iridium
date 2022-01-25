@@ -3,6 +3,7 @@
   "references": [
     { "path": "packages/figma" },
     { "path": "packages/npm" },
+    { "path": "packages/deploy" },
     { "path": "packages/foundation" }
   ]
 }

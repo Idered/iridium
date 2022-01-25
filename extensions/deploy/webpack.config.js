@@ -19,10 +19,13 @@ const config = {
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-    extensions: [".ts", ".js", ".json"],
+    extensions: [".ts", ".js"],
+  },
+  stats: {
+    errorDetails: true,
   },
   optimization: {
-    minimize: false,
+    minimize: true,
     minimizer: [
       new TerserPlugin({
         terserOptions: {
@@ -41,12 +44,11 @@ const config = {
     rules: [
       {
         test: /\.ts$/,
+        loader: "ts-loader",
         exclude: /node_modules/,
-        use: [
-          {
-            loader: "ts-loader",
-          },
-        ],
+        options: {
+          projectReferences: true,
+        },
       },
     ],
   },

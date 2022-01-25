@@ -10,7 +10,7 @@ import { VSCodeContext } from "./VSCodeContext";
 import { VSCodeWebView } from "./VSCodeWebView";
 
 export function bootstrap(props: {
-  viewId: string;
+  viewId: string | string[];
   context: vscode.ExtensionContext;
   routes: (router: Router) => void;
 }) {
@@ -34,17 +34,19 @@ export function bootstrap(props: {
     });
 
   // Init webview loading
-  const webviewSub = vscode.window.registerWebviewViewProvider(
-    viewId,
-    app.get(WebviewProvider),
-    {
-      webviewOptions: {
-        retainContextWhenHidden: true,
-      },
-    }
-  );
-
-  context.subscriptions.push(webviewSub);
+  const ids = Array.isArray(viewId) ? viewId : [viewId];
+  ids.forEach((id) => {
+    const webviewSub = vscode.window.registerWebviewViewProvider(
+      id,
+      app.get(WebviewProvider),
+      {
+        webviewOptions: {
+          retainContextWhenHidden: true,
+        },
+      }
+    );
+    context.subscriptions.push(webviewSub);
+  });
 
   return app;
 }

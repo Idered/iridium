@@ -1,11 +1,6 @@
 <template>
   <button
     class="button"
-    :style="{
-      '--height': `${height}px`,
-      '--padding': `${Math.round(height / 2)}px`,
-      '--font-size': `${fontSize}px`,
-    }"
     :class="{
       [`button--${variant}`]: variant,
       'button--square': square,
@@ -16,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "Button",
@@ -32,15 +27,17 @@ export default defineComponent({
       default: 28,
     },
   },
-  computed: {
-    fontSize() {
-      if (this.height <= 24) return 12;
-      if (this.height <= 28) return 13;
-      if (this.height <= 32) return 14;
-      if (this.height <= 40) return 16;
-      if (this.height <= 48) return 18;
-      return 16;
-    },
+  setup(props) {
+    const padding = computed(() => {
+      return `${Math.round(props.height / 2)}px`;
+    });
+    const heightPx = computed(() => {
+      return `${props.height}px`;
+    });
+    return {
+      padding,
+      heightPx,
+    };
   },
 });
 </script>
@@ -48,12 +45,13 @@ export default defineComponent({
 <style scoped>
 .button {
   cursor: pointer;
-  padding: 0 var(--padding);
-  height: var(--height);
-  font-size: var(--fontSize);
+  font-size: var(--vscode-font-size);
+  padding: 0 v-bind(padding);
+  height: v-bind(heightPx);
   border: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   color: var(--vscode-button-foreground);
   background: var(--vscode-button-background);
 }

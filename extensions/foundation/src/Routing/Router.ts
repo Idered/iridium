@@ -3,6 +3,8 @@ import { Container, inject, injectable } from "inversify";
 import { Route } from "./Route";
 import { RouteAction, RouteRequest } from "./types";
 import { VSCodeContext } from "../App/VSCodeContext";
+import { Controller } from "./Controller";
+import { container } from "inversify-props";
 
 @injectable()
 export class Router {
@@ -13,40 +15,44 @@ export class Router {
     @inject("app") private container: Container
   ) {}
 
-  public get(uri: string, action: RouteAction) {
+  public get<T extends Controller>(uri: string, action: RouteAction<T>) {
     return this.addRoute("GET", uri, action);
   }
 
-  public post(uri: string, action: RouteAction) {
+  public post<T extends Controller>(uri: string, action: RouteAction<T>) {
     return this.addRoute("POST", uri, action);
   }
 
-  public patch(uri: string, action: RouteAction) {
+  public patch<T extends Controller>(uri: string, action: RouteAction<T>) {
     return this.addRoute("PATCH", uri, action);
   }
 
-  public put(uri: string, action: RouteAction) {
+  public put<T extends Controller>(uri: string, action: RouteAction<T>) {
     return this.addRoute("PUT", uri, action);
   }
 
-  public delete(uri: string, action: RouteAction) {
+  public delete<T extends Controller>(uri: string, action: RouteAction<T>) {
     return this.addRoute("DELETE", uri, action);
   }
 
-  private addRoute(method: string, uri: string, action: RouteAction) {
+  private addRoute<T extends Controller>(
+    method: string,
+    uri: string,
+    action: RouteAction<T>
+  ) {
     const route = this.createRoute(method, uri, action);
     this.routes.push(route);
     if (!this.container.isBound(route.controller)) {
       this.container.bind(route.controller).toSelf();
     }
   }
-
-  private createRoute(
-    method: string,
+  private createRoute<T extends Controller>(
+    methods: string | string[],
     uri: string,
-    [controller, action]: RouteAction
+    [controller, action]: RouteAction<T>
   ) {
-    return new Route({ uri, method, action, controller });
+    const methodsArray = Array.isArray(methods) ? methods : [methods];
+    return new Route({ uri, methods: methodsArray, action, controller });
   }
 
   public registerWebview(webviewView: vscode.WebviewView) {
@@ -76,6 +82,7 @@ export class Router {
       });
     }
 
+    const params = this.provideParams(route, request);
     const controller = this.container.get<any>(route.controller);
     const result = await controller[route.action](request.payload);
 
@@ -87,5 +94,17 @@ export class Router {
         payload: result,
       });
     }
+  }
+
+  private provideParams(route: Route, request: RouteRequest) {
+    const params = route.getParameters(request);
+    const paramsArr = Object.values(params);
+    if (container.isBound("Params")) {
+      container.unbind("Params");
+    }
+    container.addRequest(function () {
+      return params;
+    }, "Params");
+    return paramsArr;
   }
 }

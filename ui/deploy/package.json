@@ -1,0 +1,26 @@
+{
+  "name": "iridium-deploy",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build"
+  },
+  "dependencies": {
+    "@vueform/multiselect": "^2.2.0",
+    "pusher-js": "^7.0.3",
+    "swrv": "1.0.0-beta.8",
+    "uuid": "^8.3.2",
+    "vue": "^3.2.11",
+    "vue-multiselect": "3.0.0-alpha.2"
+  },
+  "devDependencies": {
+    "@types/node": "^16.10.8",
+    "@types/uuid": "^8.3.1",
+    "@vitejs/plugin-vue": "^1.9.3",
+    "@vue/compiler-sfc": "^3.2.20",
+    "typescript": "^4.4.4",
+    "vite": "^2.6.7",
+    "vite-tsconfig-paths": "3.3.17",
+    "vue-tsc": "0.28.9"
+  }
+}

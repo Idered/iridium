@@ -1,0 +1,111 @@
+{
+  "name": "deploy",
+  "version": "0.3.3",
+  "main": "./out/extension.js",
+  "license": "MIT",
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production && yarn --cwd ../../ui/deploy build",
+    "build": "webpack --mode production",
+    "dev": "webpack  --mode development --watch",
+    "pretest": "yarn run build && yarn run lint",
+    "lint": "eslint . --ext ts"
+  },
+  "author": {
+    "name": "Kasper Mikiewicz",
+    "email": "iam@kasper.io",
+    "url": "https://kasper.io"
+  },
+  "preview": true,
+  "displayName": "Deploy",
+  "publisher": "idered",
+  "description": "Deploy to Vercel.",
+  "icon": "resources/marketplace-icon.png",
+  "engines": {
+    "vscode": "^1.52.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "galleryBanner": {
+    "color": "#fff",
+    "theme": "light"
+  },
+  "bugs": {
+    "email": "support@kasper.io"
+  },
+  "keywords": [
+    "deploy",
+    "zeit",
+    "now",
+    "vercel"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Idered/iridium"
+  },
+  "activationEvents": [
+    "onView:iridium-deploy.vercel",
+    "onView:iridium-deploy.surge",
+    "onView:iridium-deploy.netlify",
+    "onView:iridium-deploy.githubPages"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "iridium-deploy",
+          "title": "Deploy",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "iridium-deploy": [
+        {
+          "type": "webview",
+          "id": "iridium-deploy.vercel",
+          "name": "Vercel"
+        },
+        {
+          "type": "webview",
+          "id": "iridium-deploy.surge",
+          "name": "Surge"
+        },
+        {
+          "type": "webview",
+          "id": "iridium-deploy.netlify",
+          "name": "Netlify"
+        },
+        {
+          "type": "webview",
+          "id": "iridium-deploy.githubPages",
+          "name": "GitHub Pages"
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "@vercel/client": "10.2.3-canary.14",
+    "cross-spawn": "^7.0.3",
+    "foundation": "link:../foundation/foundation",
+    "reflect-metadata": "^0.1.13",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.2.102",
+    "@types/cross-spawn": "^6.0.2",
+    "@types/mocha": "^8.0.4",
+    "@types/node": "^16.9.6",
+    "@types/uuid": "^8.3.0",
+    "@types/vscode": "^1.52.0",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.15.0",
+    "mocha": "^8.1.3",
+    "terser-webpack-plugin": "^5.1.1",
+    "typescript": "^4.4.4",
+    "vscode-test": "^1.4.1",
+    "webpack": "^5.19.0",
+    "webpack-cli": "^4.4.0"
+  }
+}

@@ -6,7 +6,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Iridium: Database",
+      "name": "Run: Database",
       "type": "extensionHost",
       "request": "launch",
       "args": [
@@ -19,7 +19,7 @@
       "preLaunchTask": "dev:database"
     },
     {
-      "name": "Run Iridium: Figma",
+      "name": "Run: Figma",
       "type": "extensionHost",
       "request": "launch",
       "args": [
@@ -32,7 +32,7 @@
       "preLaunchTask": "dev:figma"
     },
     {
-      "name": "Run Iridium: NPM",
+      "name": "Run: Node Dependencies",
       "type": "extensionHost",
       "request": "launch",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}/extensions/npm"],
@@ -43,7 +43,7 @@
       "preLaunchTask": "dev:npm"
     },
     {
-      "name": "Run Iridium: Deploy",
+      "name": "Run: Deploy",
       "type": "extensionHost",
       "request": "launch",
       "args": [

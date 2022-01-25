@@ -1,0 +1,5 @@
+out/**/*.js.map
+webpack.config.js
+tsconfig.json
+node_modules
+src

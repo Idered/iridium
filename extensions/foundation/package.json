@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "inversify": "^5.1.1",
-    "inversify-logger-middleware": "^3.1.0"
+    "inversify-logger-middleware": "^3.1.0",
+    "inversify-props": "^2.2.6"
   }
 }

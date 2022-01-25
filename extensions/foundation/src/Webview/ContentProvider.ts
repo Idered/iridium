@@ -3,7 +3,10 @@ import { join } from "path";
 import { readFileSync } from "fs";
 
 export default class ContentProvider {
-  getDevServerContent() {
+  getDevServerContent(
+    context: vscode.ExtensionContext,
+    webviewView: vscode.WebviewView
+  ) {
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -11,7 +14,7 @@ export default class ContentProvider {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
-    <body>
+    <body data-view="${webviewView.viewType}">
       <div id="app"></div>
       <script type="module" src="http://localhost:3000/src/main.ts"></script>
     </body>
@@ -50,7 +53,6 @@ export default class ContentProvider {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-      <div id="app"></div>
       <script type="module" src="${index}"></script>
       <script type="module" src="${vendor}"></script>
     </body>
@@ -65,6 +67,6 @@ export default class ContentProvider {
     if (process.env.NODE_ENV === "production") {
       return this.getProductionContent(context, webviewView);
     }
-    return this.getDevServerContent();
+    return this.getDevServerContent(context, webviewView);
   }
 }

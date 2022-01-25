@@ -13,11 +13,11 @@
     "dev:npm": "concurrently \"yarn --cwd extensions/npm dev\" \"yarn --cwd ui/npm dev\""
   },
   "workspaces": [
-    "./ui/npm",
-    "./extensions/npm",
-    "./ui/deploy",
-    "./extensions/deploy",
-    "./extensions/foundation"
+    "ui/npm",
+    "extensions/npm",
+    "ui/deploy",
+    "extensions/deploy",
+    "extensions/foundation"
   ],
   "dependencies": {
     "concurrently": "^5.3.0",

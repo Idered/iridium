@@ -1,0 +1,12 @@
+{
+  "extends": "../ui.tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./src/",
+    "esModuleInterop": false,
+    "paths": {
+      "@/*": ["../src/*"],
+      "@shared/*": ["../../shared/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.vue"]
+}
