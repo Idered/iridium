@@ -54,7 +54,7 @@
       "activitybar": [
         {
           "id": "iridium",
-          "title": "",
+          "title": "Node Dependencies",
           "icon": "resources/icon.svg"
         }
       ]
