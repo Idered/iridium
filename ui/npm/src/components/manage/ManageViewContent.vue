@@ -107,6 +107,7 @@ export default defineComponent({
         await API.changeVersion({
           name: change.item.name,
           version: change.version,
+          originalVersion: change.item.version,
         });
         store.commit("changeVersion", change);
       });

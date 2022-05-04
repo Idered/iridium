@@ -85,7 +85,11 @@ export class API {
       packageJSON: API.packageJSON,
     });
   }
-  static changeVersion(args: { name: string; version: string }) {
+  static changeVersion(args: {
+    name: string;
+    version: string;
+    originalVersion: string;
+  }) {
     return API.vscode.fetch.post<string[]>("/change-version", {
       ...args,
       packageJSON: API.packageJSON,

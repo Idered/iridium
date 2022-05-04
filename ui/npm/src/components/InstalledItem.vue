@@ -333,8 +333,8 @@ export default defineComponent({
 }
 
 .unused {
-  cursor: help;
-  opacity: 0.5;
+  /* cursor: help;
+  opacity: 0.5; */
 }
 
 .version {

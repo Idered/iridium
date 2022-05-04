@@ -3,6 +3,7 @@ import { Uri, window, workspace } from "vscode";
 import { inject } from "foundation";
 import { ClientManager } from "../clients/ClientManager";
 import { dirname, relative } from "path";
+import * as fs from "fs";
 import depcheck from "./unimported-fn";
 
 export class PackageJsonController extends Controller {
@@ -90,11 +91,28 @@ export class PackageJsonController extends Controller {
   async changeVersion(data: {
     name: string;
     version: string;
+    originalVersion: string;
     packageJSON: string;
   }) {
     this.clientManager.getClient(data.packageJSON).install({
       query: `${data.name}@${data.version}`,
     });
+
+    if (data.originalVersion.startsWith("^")) {
+      const path = Uri.joinPath(
+        workspace.workspaceFolders[0].uri,
+        data.packageJSON
+      ).fsPath;
+      const packageJson = JSON.parse(fs.readFileSync(path, "utf8"));
+      if (packageJson.dependencies?.[data.name]) {
+        packageJson.dependencies[data.name] = `^${data.version}`;
+      }
+      if (packageJson.devDependencies?.[data.name]) {
+        packageJson.devDependencies[data.name] = `^${data.version}`;
+      }
+      fs.writeFileSync(path, JSON.stringify(packageJson, null, 2));
+    }
+
     return {};
   }
 
