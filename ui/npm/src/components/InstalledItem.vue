@@ -36,7 +36,7 @@
       </span>
       <div class="overlay" v-if="showActions">
         <div class="overlay__content">
-          <SelectInput
+          <VSelect
             tabindex="-1"
             class="version-input"
             :model-value="coercedVersion"
@@ -130,7 +130,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref, watch } from "vue";
-import SelectInput from "./SelectInput.vue";
+import VSelect from "./VSelect.vue";
 import maxSatisfying from "semver/ranges/max-satisfying";
 import minSatisfying from "semver/ranges/min-satisfying";
 import coerce from "semver/functions/coerce";
@@ -142,7 +142,7 @@ import { useStore } from "../lib/store";
 import SearchStop from "./icons/SearchStop.vue";
 
 export default defineComponent({
-  components: { SelectInput, Loader, Stat, SearchStop },
+  components: { VSelect, Loader, Stat, SearchStop },
   name: "InstalledItem",
   emits: ["remove", "changeVersion", "swapType", "update"],
   props: {

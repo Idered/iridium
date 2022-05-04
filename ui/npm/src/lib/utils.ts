@@ -79,3 +79,35 @@ export const withUpdate = async (
     store.commit("deleteUpdatingPackage", packageName);
   }
 };
+
+export const groupPackageJsonFiles = (files: string[]) => {
+  return files.reduce((groups, item) => {
+    const parts = item.split("/");
+    const group = groups.find((el) => el.group === parts[0]);
+    if (parts[0] === "package.json") {
+      groups.push({
+        label: "package.json",
+        value: "package.json",
+      });
+      return groups;
+    }
+    if (!group) {
+      groups.push({
+        group: parts[0],
+        children: [
+          {
+            label: parts.slice(1).join("/").replace("/package.json", ""),
+            value: item,
+          },
+        ],
+      });
+    } else {
+      group.children?.push({
+        label: parts.slice(1).join("/").replace("/package.json", ""),
+        value: item,
+      });
+    }
+
+    return groups;
+  }, [] as any[]);
+};

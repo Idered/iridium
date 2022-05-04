@@ -1,7 +1,6 @@
 <template>
   <div class="autocomplete">
     <label class="search-input">
-      <SearchIcon />
       <input
         ref="inputRef"
         tabindex="0"
@@ -20,6 +19,7 @@
         @keydown.prevent.up="goUp"
         @keydown.prevent.down="goDown"
       />
+      <SearchIcon />
     </label>
 
     <div v-if="state !== State.Inactive" class="results" @click.stop>
@@ -410,16 +410,15 @@ export default defineComponent({
       --vscode-settings-textInputBorder,
       var(--vscode-settings-textInputBackground)
     );
-  color: var(--vscode-settings-textInputForeground);
 }
 .search-input:focus-within {
   border-color: var(--vscode-focusBorder);
 }
 .search-input svg {
   width: 16px;
-  margin-right: 0.25rem;
 }
 .search-input input {
+  color: var(--vscode-settings-textInputForeground);
   border: 0;
   width: 100%;
   background: none;
@@ -451,14 +450,19 @@ export default defineComponent({
   box-sizing: border-box;
 }
 .results__initial {
-  padding: 0.5rem 0.75rem;
+  padding: 0.375rem 0.5rem;
 }
 .results__algolia {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   display: grid;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.01rem;
+  font-weight: 600;
+  font-size: 11px;
   color: var(--vscode-descriptionForeground);
   grid-template-columns: auto auto;
-  justify-content: flex-end;
+  justify-content: flex-start;
   column-gap: 0.375rem;
   align-items: center;
 }

@@ -10,10 +10,16 @@
       <NavBar />
 
       <div class="header" v-if="[View.Manage, View.Analyze].includes(view)">
-        <SelectInput
-          v-if="packageJSONFiles.length > 1"
+        <VSelect
+          v-if="displayPackageJsonFiles.length > 1"
           v-model="packageJSON"
-          :options="packageJSONFiles"
+          :options="displayPackageJsonFiles"
+          :format-placeholder="
+            (option) =>
+              typeof option === 'string'
+                ? option
+                : option?.value.replace('/package.json', '') || ''
+          "
         />
         <AnalyzeViewHeader v-if="view === View.Analyze" />
         <AutocompleteInput v-if="view === View.Manage" />
@@ -46,11 +52,11 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject, onMounted, ref, watch } from "vue";
-import SelectInput from "./components/SelectInput.vue";
+import VSelect from "./components/VSelect.vue";
 import SearchIcon from "./components/icons/SearchIcon.vue";
 import InstalledItem from "./components/InstalledItem.vue";
 import { Package } from "./types";
-import { withUpdate } from "./lib/utils";
+import { groupPackageJsonFiles, withUpdate } from "./lib/utils";
 import { API } from "./lib/api";
 import { Order, View } from "./enums";
 import coerce from "semver/functions/coerce";
@@ -71,13 +77,13 @@ export default defineComponent({
   components: {
     AutocompleteInput,
     SearchIcon,
-    SelectInput,
     EmptyView,
     InstalledItem,
     NavBar,
     ProViewContent,
     ManageViewContent,
     ManageViewFooter,
+    VSelect,
     AnalyzeViewHeader,
     AnalyzeViewFooter,
   },
@@ -221,10 +227,13 @@ export default defineComponent({
         runDepCheck();
       }
     });
-
+    const displayPackageJsonFiles = computed(() => {
+      return groupPackageJsonFiles(packageJSONFiles.value);
+    });
     return {
       packageJSON,
       packageJSONFiles,
+      displayPackageJsonFiles,
       displayedPackages,
       sizeInfo,
       view,
