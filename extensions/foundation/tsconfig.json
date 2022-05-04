@@ -4,6 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
+    "allowSyntheticDefaultImports": true,
     "rootDir": "src",
     "outDir": "./foundation"
   }

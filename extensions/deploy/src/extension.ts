@@ -3,8 +3,6 @@ import * as vscode from "vscode";
 import { bootstrap } from "foundation/App/bootstrap";
 import routes from "./routes";
 import { VercelClient } from "./clients/VercelClient";
-import { Bus } from "foundation/Bus/Bus";
-import { WebviewProviderEvents } from "foundation/Webview/WebviewProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   const App = bootstrap({
