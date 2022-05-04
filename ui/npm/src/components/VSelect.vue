@@ -172,7 +172,7 @@ function handleSelect(option: Option) {
         :readonly="!isOpen"
         @click="open"
         @keydown="
-          (e) => {
+          (e: KeyboardEvent) => {
             e.stopPropagation();
             if (
               !isOpen &&
