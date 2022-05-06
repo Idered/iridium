@@ -352,7 +352,7 @@ export default defineComponent({
 }
 
 .overlay {
-  background: var(--vscode-list-hoverBackground);
+  /* background: var(--vscode-list-hoverBackground); */
   display: none;
   justify-content: flex-end;
   align-items: center;
@@ -362,7 +362,6 @@ export default defineComponent({
   display: flex;
   column-gap: 6px;
   align-items: center;
-  padding-left: 0.75rem;
   position: relative;
 }
 

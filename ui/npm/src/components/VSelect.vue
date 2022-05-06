@@ -5,7 +5,6 @@ import { computed, PropType, ref } from "vue";
 import IconChevronDown from "./IconChevronDown.vue";
 import { useFuse } from "@vueuse/integrations/useFuse";
 import VInput from "./VInput.vue";
-import { diff } from "semver";
 
 type Option =
   | {
@@ -35,6 +34,9 @@ const props = defineProps({
   },
   formatPlaceholder: {
     type: Function as PropType<(option?: Option) => string>,
+  },
+  placeholder: {
+    type: String,
   },
   options: {
     type: Array as PropType<
@@ -121,7 +123,7 @@ function placeholder(option?: Option) {
     return props.formatPlaceholder(option);
   }
   if (typeof option === "string") return option;
-  return option?.value;
+  return option?.value ?? props.placeholder;
 }
 
 function label(option?: Option) {
@@ -211,7 +213,7 @@ function handleSelect(option: Option) {
         "
         @keyup.esc="close"
         v-model="search"
-        class="placeholder-[color:var(--vscode-settings-textInputForeground)]"
+        class="placeholder-[color:var(--vscode-settings-textInputForeground, #999)] pr-6 overflow-ellipsis"
         :placeholder="isFocused ? 'Search' : placeholder(selected)"
         :class="{
           'cursor-pointer': !isFocused,
@@ -253,11 +255,9 @@ function handleSelect(option: Option) {
             @click="handleSelect(result.item)"
             class="relative grid h-6 cursor-pointer items-center px-2 transition-colors whitespace-nowrap border"
             :class="{
-              'bg-[color:var(--vscode-list-activeSelectionBackground)]  border-[color:var(--vscode-focusBorder)]':
-                i === activeIndex,
+              'bg-[color:var(--vscode-list-activeSelectionBackground)] text-[color:var(--vscode-list-activeSelectionForeground)] border-[color:var(--vscode-focusBorder)]':
+                i === activeIndex || modelValue === val(result.item),
               'border-transparent': i !== activeIndex,
-              'text-[color:var(--vscode-list-activeSelectionForeground)]':
-                modelValue === val(result.item),
               'pl-4':
                 typeof result.item === 'object' &&
                 result.item.indent &&
