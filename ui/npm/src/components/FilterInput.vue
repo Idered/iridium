@@ -43,7 +43,11 @@ const store = useStore();
         clip-rule="evenodd"
       ></path>
     </svg>
-    <button v-else @click="store.commit('setFilterQuery', '')">
+    <button
+      v-else
+      @click="store.commit('setFilterQuery', '')"
+      class="focus:outline-1 focus:outline focus:outline-[color:var(--vscode-focusBorder)]"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
