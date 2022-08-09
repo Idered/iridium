@@ -7,6 +7,11 @@ export class ConfigController extends Controller {
     return {
       showAnalyzeTab: config.get("showAnalyzeTab"),
       showProTab: config.get("showProTab"),
+      showResultDescription: config.get("showResultDescription"),
+      excludeVersions: config.get("excludeVersions"),
+      showAlgoliaInfo: config.get("showAlgoliaInfo"),
+      showShortcuts: config.get("showShortcuts"),
+      maxNumberOfResults: config.get("maxNumberOfResults"),
     };
   }
 }

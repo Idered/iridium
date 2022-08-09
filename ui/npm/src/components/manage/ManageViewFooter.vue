@@ -4,6 +4,22 @@
       <a
         class="footer__item-link"
         role="button"
+        aria-label="Size view"
+        @click="
+          navigateTo(
+            store.state.view === View.Analyze ? View.Manage : View.Analyze
+          )
+        "
+      >
+        <div>
+          {{ totalGZIPSize.size.toFixed(1) }} {{ totalGZIPSize.unit }}
+        </div></a
+      >
+    </div>
+    <div class="footer__item">
+      <a
+        class="footer__item-link"
+        role="button"
         :title="`${dependencyCount} ${
           dependencyCount === 1 ? 'dependency' : 'dependencies'
         }`"
@@ -83,83 +99,80 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, inject, PropType } from "vue";
+<script setup lang="ts">
+import { computed, inject, PropType } from "vue";
 import maxSatisfying from "semver/ranges/max-satisfying";
 import minSatisfying from "semver/ranges/min-satisfying";
 import coerce from "semver/functions/coerce";
 import { Package } from "../../types";
 import { VSCode } from "@shared/helpers/use-vscode";
+import { View } from "../../enums";
+import { useStore } from "../../lib/store";
+import { formatSize } from "../../lib/utils";
 
-export default defineComponent({
-  name: "ManageViewFooter",
-  emits: ["updateStart", "updateEnd", "updateAll"],
-  props: {
-    installedPackages: {
-      type: Array as PropType<Package[]>,
-      required: true,
-    },
-    installedPackagesTags: {
-      type: Object as PropType<Record<string, { latest?: string }>>,
-      required: true,
-    },
-    installedPackagesVersions: {
-      type: Object,
-      required: true,
-    },
+const emit = defineEmits(["updateStart", "updateEnd", "updateAll"]);
+
+const props = defineProps({
+  installedPackages: {
+    type: Array as PropType<Package[]>,
+    required: true,
   },
-  setup(props, { emit }) {
-    // FIXME: Move this up
-    const vscode = inject<VSCode>("vscode") as VSCode;
-    const dependencyCount = computed(() => {
-      return props.installedPackages.reduce((count, item) => {
-        return item.isDevDependency ? count : count + 1;
-      }, 0);
-    });
-    const devDependencyCount = computed(() => {
-      return props.installedPackages.length - dependencyCount.value;
-    });
-    const outdatedDependencies = computed(() => {
-      return props.installedPackages.filter((item) => {
-        const versions = props.installedPackagesVersions[item.name] || [];
-        const coercedVersion =
-          minSatisfying(versions, item.version) ||
-          coerce(item.version)?.raw ||
-          "0.0.0";
-        const maxSatisfyingVersion = maxSatisfying(versions, item.version);
-        return (
-          typeof maxSatisfyingVersion === "string" &&
-          maxSatisfyingVersion !== coercedVersion
-        );
-      });
-    });
-    const outdatedCount = computed(() => {
-      return outdatedDependencies.value.length;
-    });
-    const latestPackages = computed(() => {
-      return outdatedDependencies.value.map((item) => ({
-        ...item,
-        version: props.installedPackagesTags[item.name].latest,
-      }));
-    });
-    const showUpdateConfirmation = async () => {
-      if (outdatedCount.value === 0) return;
-
-      const res = await vscode?.fetch.post("/update-confirmation");
-
-      if (res === "Update all") {
-        emit("updateAll", outdatedDependencies.value);
-      }
-    };
-
-    return {
-      outdatedCount,
-      dependencyCount,
-      devDependencyCount,
-      showUpdateConfirmation,
-    };
+  installedPackagesTags: {
+    type: Object as PropType<Record<string, { latest?: string }>>,
+    required: true,
+  },
+  installedPackagesVersions: {
+    type: Object,
+    required: true,
   },
 });
+
+// FIXME: Move this up
+const store = useStore();
+const vscode = inject<VSCode>("vscode") as VSCode;
+const dependencyCount = computed(() => {
+  return props.installedPackages.reduce((count, item) => {
+    return item.isDevDependency ? count : count + 1;
+  }, 0);
+});
+const devDependencyCount = computed(() => {
+  return props.installedPackages.length - dependencyCount.value;
+});
+const outdatedDependencies = computed(() => {
+  return props.installedPackages.filter((item) => {
+    const versions = props.installedPackagesVersions[item.name] || [];
+    const coercedVersion =
+      minSatisfying(versions, item.version) ||
+      coerce(item.version)?.raw ||
+      "0.0.0";
+    const maxSatisfyingVersion = maxSatisfying(versions, item.version);
+    return (
+      typeof maxSatisfyingVersion === "string" &&
+      maxSatisfyingVersion !== coercedVersion
+    );
+  });
+});
+const outdatedCount = computed(() => {
+  return outdatedDependencies.value.length;
+});
+const latestPackages = computed(() => {
+  return outdatedDependencies.value.map((item) => ({
+    ...item,
+    version: props.installedPackagesTags[item.name].latest,
+  }));
+});
+const showUpdateConfirmation = async () => {
+  if (outdatedCount.value === 0) return;
+
+  const res = await vscode?.fetch.post("/update-confirmation");
+
+  if (res === "Update all") {
+    emit("updateAll", outdatedDependencies.value);
+  }
+};
+
+const navigateTo = (view: View) => store.commit("navigate", view);
+const totalGZIPSize = computed(() => formatSize(store.getters.totalGZIPSize));
 </script>
 
 <style scoped>

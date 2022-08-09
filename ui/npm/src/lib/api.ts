@@ -28,11 +28,19 @@ export class API {
   static setVSCode(vscode: VSCode) {
     API.vscode = vscode;
   }
-  static getSuggestions(query: string) {
+  static getSuggestions(query: string, count: number) {
     return API.algolia.search<AlgoliaSearchResponse>(query, {
       analyticsTags: ["idered-vscode"],
-      hitsPerPage: 4,
+      hitsPerPage: Math.min(Math.max(count, 1), 20),
     });
+  }
+  static async getIsPackageDeprecated(query: string) {
+    const res = await API.algolia.search<AlgoliaSearchResponse>(query, {
+      analyticsTags: ["idered-vscode"],
+      hitsPerPage: 1,
+    });
+
+    return res.hits[0]?.deprecated;
   }
   static getSizeInfo(query: string) {
     return API.request<GetSizeInfoResponse>(

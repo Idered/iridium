@@ -29,7 +29,6 @@ export function bootstrap(props: {
       // Attach router to webview
       app.get(Router).registerWebview(webviewView);
       app.bind(VSCodeWebView).toConstantValue(webviewView.webview);
-
       routes(app.get(Router));
     });
 

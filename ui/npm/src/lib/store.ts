@@ -7,6 +7,8 @@ import { Package, PackageSizeInfo } from "../types";
 export interface State {
   view: View;
   query: string;
+  filterQuery: string;
+  filterInputIsFocused: boolean;
   analyzeSort: AnalyzeSortType;
   analyzeOrder: Order;
   errors: Map<ErrorType, any>;
@@ -17,8 +19,13 @@ export interface State {
   sizeInfo: Record<string, PackageSizeInfo>;
   depCheck: DepCheck | null;
   config: {
+    showShortcuts: boolean;
+    showResultDescription: boolean;
+    excludeVersions: string[];
     showAnalyzeTab: boolean;
     showProTab: boolean;
+    showAlgoliaInfo: boolean;
+    maxNumberOfResults: number;
   };
 }
 
@@ -27,6 +34,8 @@ export const key: InjectionKey<Store<State>> = Symbol("store");
 export const store = createStore<State>({
   state: {
     query: "",
+    filterQuery: "",
+    filterInputIsFocused: false,
     analyzeSort: AnalyzeSortType.GZIP,
     analyzeOrder: Order.Descending,
     errors: new Map(),
@@ -34,8 +43,12 @@ export const store = createStore<State>({
     packageJSON: null,
     packageJSONFiles: [],
     config: {
+      showShortcuts: true,
+      showResultDescription: true,
       showAnalyzeTab: true,
       showProTab: true,
+      showAlgoliaInfo: true,
+      maxNumberOfResults: 4,
     },
     sizeInfo: {},
     depCheck: null,
@@ -56,6 +69,12 @@ export const store = createStore<State>({
     },
   },
   mutations: {
+    setFilterQuery(state, query: string) {
+      state.filterQuery = query;
+    },
+    setFilterInputIsFocused(state, isFocused: boolean) {
+      state.filterInputIsFocused = isFocused;
+    },
     setAnalyzeSort(state, sort: AnalyzeSortType) {
       if (state.analyzeSort === sort) {
         state.analyzeOrder =

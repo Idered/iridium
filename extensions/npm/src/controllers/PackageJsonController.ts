@@ -4,7 +4,7 @@ import { inject } from "foundation";
 import { ClientManager } from "../clients/ClientManager";
 import { dirname, relative } from "path";
 import * as fs from "fs";
-import depcheck from "./unimported-fn";
+// import depcheck from "./unimported-fn";
 
 export class PackageJsonController extends Controller {
   @inject(ClientManager) private clientManager: ClientManager;
@@ -60,19 +60,19 @@ export class PackageJsonController extends Controller {
     return {};
   }
 
-  async runDepCheck(data: { packageJSON: string }) {
-    const path = Uri.joinPath(
-      workspace.workspaceFolders[0].uri,
-      data.packageJSON
-    ).fsPath;
+  // async runDepCheck(data: { packageJSON: string }) {
+  //   const path = Uri.joinPath(
+  //     workspace.workspaceFolders[0].uri,
+  //     data.packageJSON
+  //   ).fsPath;
 
-    try {
-      const result = await depcheck(dirname(path));
-      return { status: "success", result };
-    } catch (err) {
-      return { status: "error" };
-    }
-  }
+  //   try {
+  //     const result = await depcheck(dirname(path));
+  //     return { status: "success", result };
+  //   } catch (err) {
+  //     return { status: "error" };
+  //   }
+  // }
 
   async swapPackageType(data: {
     name: string;

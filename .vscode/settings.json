@@ -5,9 +5,9 @@
   },
   "search.exclude": {
     "**/database": true,
-    "**/npm": true,
+    "**/npm": false,
     "**/figma": true,
-    "**/deploy": false,
+    "**/deploy": true,
     "out": true // set this to false to include "out" folder in search results
   },
   // Turn off tsc task auto detection since we have the necessary tasks as npm scripts

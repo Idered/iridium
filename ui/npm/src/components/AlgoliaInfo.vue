@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
   <svg
     height="16"
@@ -15,11 +17,3 @@
     />
   </svg>
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "AlgoliaInfo",
-});
-</script>
-<style scoped></style>

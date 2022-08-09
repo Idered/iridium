@@ -8,7 +8,7 @@
     :tags="installedPackagesTags[item.name]"
     :versions="installedPackagesVersions[item.name]"
     :size-info="sizeInfo[item.name]"
-    @update="handleUpdatePackage"
+    @update="handleChangeVersion"
     @changeVersion="handleChangeVersion"
     @remove="handleRemovePackage"
     @swapType="handleSwapType"
@@ -22,14 +22,14 @@
     :tags="installedPackagesTags[item.name]"
     :versions="installedPackagesVersions[item.name]"
     :size-info="sizeInfo[item.name]"
-    @update="handleUpdatePackage"
+    @update="handleChangeVersion"
     @changeVersion="handleChangeVersion"
     @remove="handleRemovePackage"
     @swapType="handleSwapType"
   />
 </template>
-<script lang="ts">
-import { defineComponent } from "vue";
+
+<script setup lang="ts">
 import InstalledItem from "../InstalledItem.vue";
 import { useStore } from "../../lib/store";
 import { computed } from "vue";
@@ -39,95 +39,73 @@ import { Package, PackageSizeInfo } from "../../types";
 import { API } from "../../lib/api";
 import { PropType } from "vue";
 
-export default defineComponent({
-  name: "ManageViewContent",
-  components: {
-    InstalledItem,
+const props = defineProps({
+  installedPackages: {
+    type: Array as PropType<Package[]>,
+    required: true,
   },
-  props: {
-    installedPackages: {
-      type: Array as PropType<Package[]>,
-      required: true,
-    },
-    displayedPackages: {
-      type: Array as PropType<Package[]>,
-      required: true,
-    },
-    installedPackagesTags: {
-      type: Object as PropType<
-        Record<string, Record<string, string> & { latest?: string }>
-      >,
-      required: true,
-    },
-    installedPackagesVersions: {
-      type: Object as PropType<{
-        [x: string]: string[];
-      }>,
-      required: true,
-    },
-    sizeInfo: {
-      type: Object as PropType<Record<string, PackageSizeInfo>>,
-      required: true,
-    },
+  displayedPackages: {
+    type: Array as PropType<Package[]>,
+    required: true,
   },
-  setup(props) {
-    const store = useStore();
-    const view = computed(() => store.state.view);
-
-    const handleRemovePackage = async (pkg: Package) => {
-      const typingsName = getTypingsPackageName(pkg.name);
-      const typings = props.installedPackages.find(
-        (item) => item.name === typingsName
-      );
-      const packagesToRemove = [pkg.name];
-      if (typings) {
-        packagesToRemove.push(typings.name);
-      }
-      withUpdate(packagesToRemove, async () => {
-        await API.removePackages(packagesToRemove);
-        store.commit("removePackages", packagesToRemove);
-      });
-    };
-    const handleSwapType = async (item: Package) => {
-      withUpdate(item.name, async () => {
-        await API.swapPackageType({
-          name: item.name,
-          dev: item.isDevDependency,
-          version: item.version,
-        });
-        store.commit("swapPackageType", item);
-      });
-    };
-    const handleChangeVersion = (change: {
-      item: Package;
-      version: string;
-    }) => {
-      if (!change.version) return;
-      withUpdate(change.item.name, async () => {
-        await API.changeVersion({
-          name: change.item.name,
-          version: change.version,
-          originalVersion: change.item.version,
-        });
-        store.commit("changeVersion", change);
-      });
-    };
-    const handleUpdatePackage = (change: { item: Package }) => {
-      withUpdate(change.item.name, async () => {
-        await API.updatePackage(change.item.name);
-      });
-    };
-    return {
-      View,
-      view,
-      handleUpdatePackage,
-      handleSwapType,
-      handleRemovePackage,
-      handleChangeVersion,
-    };
+  installedPackagesTags: {
+    type: Object as PropType<
+      Record<string, Record<string, string> & { latest?: string }>
+    >,
+    required: true,
+  },
+  installedPackagesVersions: {
+    type: Object as PropType<{
+      [x: string]: string[];
+    }>,
+    required: true,
+  },
+  sizeInfo: {
+    type: Object as PropType<Record<string, PackageSizeInfo>>,
+    required: true,
   },
 });
+
+const store = useStore();
+const view = computed(() => store.state.view);
+
+const handleRemovePackage = async (pkg: Package) => {
+  const typingsName = getTypingsPackageName(pkg.name);
+  const typings = props.installedPackages.find(
+    (item) => item.name === typingsName
+  );
+  const packagesToRemove = [pkg.name];
+  if (typings) {
+    packagesToRemove.push(typings.name);
+  }
+  withUpdate(packagesToRemove, async () => {
+    await API.removePackages(packagesToRemove);
+    store.commit("removePackages", packagesToRemove);
+  });
+};
+const handleSwapType = async (item: Package) => {
+  withUpdate(item.name, async () => {
+    await API.swapPackageType({
+      name: item.name,
+      dev: item.isDevDependency,
+      version: item.version,
+    });
+    store.commit("swapPackageType", item);
+  });
+};
+const handleChangeVersion = (change: { item: Package; version: string }) => {
+  if (!change.version) return;
+  withUpdate(change.item.name, async () => {
+    await API.changeVersion({
+      name: change.item.name,
+      version: change.version,
+      originalVersion: change.item.version,
+    });
+    store.commit("changeVersion", change);
+  });
+};
 </script>
+
 <style scoped>
 .title {
   font-size: 11px;
@@ -135,6 +113,5 @@ export default defineComponent({
   text-transform: uppercase;
   margin-bottom: 0.25rem;
   padding: 1rem 0.75rem 0;
-  background: var(--vscode-sideBar-background);
 }
 </style>

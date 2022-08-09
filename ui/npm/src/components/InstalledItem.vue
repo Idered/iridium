@@ -1,6 +1,142 @@
+<script setup lang="ts">
+import { computed, PropType } from "vue";
+import VSelect from "./VSelect.vue";
+import maxSatisfying from "semver/ranges/max-satisfying";
+import minSatisfying from "semver/ranges/min-satisfying";
+import coerce from "semver/functions/coerce";
+import Loader from "./Loader.vue";
+import { Package, PackageSizeInfo } from "../types";
+import Stat from "./Stat.vue";
+import { View } from "../enums";
+import { useStore } from "../lib/store";
+
+const emit = defineEmits(["remove", "changeVersion", "swapType", "update"]);
+
+const props = defineProps({
+  sizeInfo: {
+    type: Object as PropType<PackageSizeInfo>,
+  },
+  item: {
+    type: Object as PropType<Package>,
+    required: true,
+  },
+  tags: {
+    type: Object as PropType<Record<string, string> & { latest?: string }>,
+    default: () => ({}),
+  },
+  versions: {
+    type: Array as PropType<string[]>,
+    default: () => [],
+  },
+});
+
+const store = useStore();
+const view = computed(() => store.state.view);
+const coercedVersion = computed(
+  () =>
+    minSatisfying(props.versions, props.item.version) ||
+    coerce(props.item.version)?.raw ||
+    "0.0.0"
+);
+const currentMajor = computed(() => coerce(props.item.version)?.major);
+const currentMinor = computed(() => coerce(props.item.version)?.minor);
+const currentPatch = computed(() => coerce(props.item.version)?.patch);
+const latestVersion = computed(() =>
+  coerce(
+    props.versions.find((item) => !/alpha|beta|experimental|pre/.test(item))
+  )
+);
+const latestMajor = computed(() => latestVersion.value?.major);
+const latestMinor = computed(() => latestVersion.value?.minor);
+const latestPatch = computed(() => latestVersion.value?.patch);
+const showActions = computed(() => {
+  return !/^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
+    props.item.version
+  );
+});
+const hasAvailableUpdate = computed(
+  () =>
+    typeof maxSatisfyingVersion.value === "string" &&
+    maxSatisfyingVersion.value !== coercedVersion.value
+);
+const hasMajorUpdate = computed(
+  () =>
+    hasAvailableUpdate.value &&
+    typeof latestMajor.value === "number" &&
+    typeof currentMajor.value === "number" &&
+    latestMajor.value > currentMajor.value
+);
+const hasMinorUpdate = computed(
+  () =>
+    hasAvailableUpdate.value &&
+    (hasMajorUpdate.value ||
+      (typeof latestMinor.value === "number" &&
+        typeof currentMinor.value === "number" &&
+        latestMinor.value > currentMinor.value))
+);
+const hasPatchUpdate = computed(
+  () =>
+    hasAvailableUpdate.value &&
+    (hasMinorUpdate.value ||
+      (typeof latestPatch.value === "number" &&
+        typeof currentPatch.value === "number" &&
+        latestPatch.value > currentPatch.value))
+);
+const isUpdating = computed(() =>
+  store.state.updatingPackages.includes(props.item.name)
+);
+const displayVersion = computed(() => {
+  if (props.item.version.match(/http/)) {
+    return "Custom";
+  }
+  return props.item.version;
+});
+const swapPackageType = () => {
+  emit("swapType", props.item);
+};
+const maxSatisfyingVersion = computed(() => {
+  return maxSatisfying(props.versions, props.item.version);
+});
+const isUnused = computed(() => store.getters.isUnused(props.item.name));
+const updatePackageToMaxSatisfying = () => {
+  emit("update", { item: props.item, version: maxSatisfyingVersion.value });
+};
+const updatePackageToLatest = () => {
+  if (!props.tags.latest) return;
+  handleVersionChange(props.tags.latest);
+};
+const handleVersionChange = (newVersion: string) => {
+  emit("changeVersion", {
+    item: props.item,
+    version: newVersion,
+  });
+};
+
+const focusPrev = (event: KeyboardEvent) => {
+  const target = event.target as HTMLDivElement;
+  const prev = target.previousElementSibling as HTMLDivElement;
+  prev?.focus();
+};
+
+const focusNext = (event: KeyboardEvent) => {
+  const target = event.target as HTMLDivElement;
+  const next = target.nextElementSibling as HTMLDivElement;
+  next?.focus();
+};
+
+const handleDelete = (event: KeyboardEvent) => {
+  const target = event.target as HTMLDivElement;
+  const next = target.nextElementSibling as HTMLDivElement;
+  const prev = target.previousElementSibling as HTMLDivElement;
+  next?.focus();
+  if (!next) prev?.focus();
+  emit("remove", props.item);
+};
+</script>
+
 <template>
   <div
-    class="item"
+    class="item relative focus:z-50 focus:outline-1 focus:outline focus:outline-[color:var(--vscode-focusBorder)]"
     :class="{ 'item--analyze': view === View.Analyze }"
     tabindex="0"
     @keydown.up.exact="focusPrev"
@@ -17,27 +153,36 @@
         :title="isUnused ? 'Unused dependency' : undefined"
         >{{ item.name }}</span
       >
-      <span
-        v-if="view === View.Manage"
-        class="version"
-        :class="{
-          'version--update-available': hasAvailableUpdate,
-        }"
-      >
-        <span v-if="/\d\.\d\.\d/.test(displayVersion)">
-          <span class="major" :class="{ 'has-major-update': hasMajorUpdate }">
+      <span v-if="view === View.Manage" class="version">
+        <span v-if="/\d+\.\d+\.\d+/.test(displayVersion)">
+          <span
+            :class="{
+              'text-[color:var(--vscode-list-highlightForeground)] codesandbox:text-[color:var(--vscode-editorWarning-foreground)]':
+                hasMajorUpdate,
+            }"
+          >
             {{ displayVersion.split(".")[0] }}
           </span>
-          <span class="rest"
-            >.{{ displayVersion.split(".").slice(1).join(".") }}
-          </span>
+          <span
+            :class="{
+              'text-[color:var(--vscode-list-highlightForeground)] codesandbox:text-[color:var(--vscode-editorWarning-foreground)]':
+                hasMinorUpdate,
+            }"
+            >.{{ displayVersion.split(".")[1] }}</span
+          >
+          <span
+            :class="{
+              'text-[color:var(--vscode-list-highlightForeground)] codesandbox:text-[color:var(--vscode-editorWarning-foreground)]':
+                hasPatchUpdate,
+            }"
+            >.{{ displayVersion.split(".").slice(2).join(".") }}</span
+          >
         </span>
         <span v-else>{{ displayVersion }}</span>
       </span>
       <div class="overlay" v-if="showActions">
         <div class="overlay__content">
           <VSelect
-            tabindex="-1"
             class="version-input"
             :model-value="coercedVersion"
             @update:model-value="handleVersionChange"
@@ -48,10 +193,12 @@
           <a
             v-if="hasAvailableUpdate"
             role="button"
+            tabindex="0"
             class="action"
-            tabindex="-1"
             :title="`Update to ${maxSatisfyingVersion}`"
             @click="updatePackageToMaxSatisfying"
+            @keydown.space="updatePackageToMaxSatisfying"
+            @keydown.enter="updatePackageToMaxSatisfying"
           >
             <svg
               width="16"
@@ -71,10 +218,12 @@
 
           <a
             role="button"
+            tabindex="0"
             class="action"
-            tabindex="-1"
             title="Change dependency type"
             @click="swapPackageType"
+            @keydown.space="swapPackageType"
+            @keydown.enter="swapPackageType"
           >
             <svg
               width="16"
@@ -96,10 +245,12 @@
 
           <a
             role="button"
+            tabindex="0"
             class="action"
-            tabindex="-1"
             title="Delete"
             @click="$emit('remove', item)"
+            @keydown.space="$emit('remove', item)"
+            @keydown.enter="$emit('remove', item)"
           >
             <svg
               width="16"
@@ -128,146 +279,6 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, PropType, ref, watch } from "vue";
-import VSelect from "./VSelect.vue";
-import maxSatisfying from "semver/ranges/max-satisfying";
-import minSatisfying from "semver/ranges/min-satisfying";
-import coerce from "semver/functions/coerce";
-import Loader from "./Loader.vue";
-import { Package, PackageSizeInfo } from "../types";
-import Stat from "./Stat.vue";
-import { View } from "../enums";
-import { useStore } from "../lib/store";
-import SearchStop from "./icons/SearchStop.vue";
-
-export default defineComponent({
-  components: { VSelect, Loader, Stat, SearchStop },
-  name: "InstalledItem",
-  emits: ["remove", "changeVersion", "swapType", "update"],
-  props: {
-    sizeInfo: {
-      type: Object as PropType<PackageSizeInfo>,
-    },
-    item: {
-      type: Object as PropType<Package>,
-      required: true,
-    },
-    tags: {
-      type: Object as PropType<Record<string, string> & { latest?: string }>,
-      default: () => ({}),
-    },
-    versions: {
-      type: Array as PropType<string[]>,
-      default: () => [],
-    },
-  },
-  setup(props, { emit }) {
-    const store = useStore();
-    const view = computed(() => store.state.view);
-    const coercedVersion = computed(
-      () =>
-        minSatisfying(props.versions, props.item.version) ||
-        coerce(props.item.version)?.raw ||
-        "0.0.0"
-    );
-    const currentMajor = computed(() => coerce(props.item.version)?.major);
-    const latestMajor = computed(() => {
-      const version = props.versions.find(
-        (item) => !/alpha|beta|experimental|pre/.test(item)
-      );
-      return coerce(version)?.major;
-    });
-    const showActions = computed(() => {
-      return !/^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
-        props.item.version
-      );
-    });
-    const hasMajorUpdate = computed(
-      () =>
-        typeof latestMajor.value === "number" &&
-        typeof currentMajor.value === "number" &&
-        latestMajor.value > currentMajor.value
-    );
-    const hasAvailableUpdate = computed(() => {
-      return (
-        typeof maxSatisfyingVersion.value === "string" &&
-        maxSatisfyingVersion.value !== coercedVersion.value
-      );
-    });
-    const isUpdating = computed(() => {
-      return store.state.updatingPackages.includes(props.item.name);
-    });
-    const displayVersion = computed(() => {
-      if (props.item.version.match(/http/)) {
-        return "Custom";
-      }
-      return props.item.version;
-    });
-    const swapPackageType = () => {
-      emit("swapType", props.item);
-    };
-    const maxSatisfyingVersion = computed(() => {
-      return maxSatisfying(props.versions, props.item.version);
-    });
-    const updatePackageToMaxSatisfying = () => {
-      emit("update", { item: props.item });
-    };
-    const updatePackageToLatest = () => {
-      if (!props.tags.latest) return;
-      handleVersionChange(props.tags.latest);
-    };
-    const handleVersionChange = (newVersion: string) => {
-      emit("changeVersion", {
-        item: props.item,
-        version: newVersion,
-      });
-    };
-
-    const focusPrev = (event: KeyboardEvent) => {
-      const target = event.target as HTMLDivElement;
-      const prev = target.previousElementSibling as HTMLDivElement;
-      prev?.focus();
-    };
-
-    const focusNext = (event: KeyboardEvent) => {
-      const target = event.target as HTMLDivElement;
-      const next = target.nextElementSibling as HTMLDivElement;
-      next?.focus();
-    };
-
-    const handleDelete = (event: KeyboardEvent) => {
-      const target = event.target as HTMLDivElement;
-      const next = target.nextElementSibling as HTMLDivElement;
-      const prev = target.previousElementSibling as HTMLDivElement;
-      next?.focus();
-      if (!next) prev?.focus();
-      emit("remove", props.item);
-    };
-
-    return {
-      showActions,
-      hasMajorUpdate,
-      handleDelete,
-      focusPrev,
-      focusNext,
-      view,
-      View,
-      displayVersion,
-      hasAvailableUpdate,
-      isUpdating,
-      coercedVersion,
-      maxSatisfyingVersion,
-      isUnused: computed(() => store.getters.isUnused(props.item.name)),
-      handleVersionChange,
-      updatePackageToMaxSatisfying,
-      updatePackageToLatest,
-      swapPackageType,
-    };
-  },
-});
-</script>
-
 <style scoped>
 .icon {
   margin-right: 8px;
@@ -279,12 +290,10 @@ export default defineComponent({
   position: relative;
 }
 
+.item--analyze:focus-within .name,
+.item--analyze:focus .name,
 .item--analyze:hover .name {
   padding: 5px 0 23px 0;
-}
-
-.item:focus-visible {
-  outline: 1px solid var(--vscode-focusBorder);
 }
 
 .content {
@@ -292,9 +301,6 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   position: relative;
-}
-
-.item--analyze .content {
 }
 
 .item :deep(.multiselect) {
@@ -314,10 +320,16 @@ export default defineComponent({
   text-overflow: ellipsis;
 }
 
+.item:focus-within .overlay,
+.item:focus .overlay,
 .item:hover .overlay {
   display: grid;
 }
 
+.item:focus-within .size-info,
+.item:focus-within .version,
+.item:focus .size-info,
+.item:focus .version,
 .item:hover .size-info,
 .item:hover .version {
   display: none;
@@ -332,10 +344,10 @@ export default defineComponent({
   padding: 5px 0;
 }
 
-.unused {
-  /* cursor: help;
-  opacity: 0.5; */
-}
+/* .unused {
+  cursor: help;
+  opacity: 0.5;
+} */
 
 .version {
   color: var(--vscode-descriptionForeground);
@@ -345,10 +357,6 @@ export default defineComponent({
   text-overflow: ellipsis;
   overflow: hidden;
   display: block;
-}
-
-.version--update-available {
-  color: var(--vscode-list-highlightForeground);
 }
 
 .overlay {
@@ -390,6 +398,8 @@ export default defineComponent({
   outline-color: var(--vscode-focusBorder);
 }
 
+.item:focus-within,
+.item:focus,
 .item:hover {
   background: var(--vscode-list-hoverBackground);
   color: var(--vscode-list-hoverForeground);
@@ -404,9 +414,5 @@ export default defineComponent({
   max-height: 14px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   width: 100%;
-}
-
-.has-major-update {
-  color: var(--vscode-list-highlightForeground);
 }
 </style>

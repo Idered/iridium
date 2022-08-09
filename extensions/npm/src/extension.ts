@@ -8,6 +8,7 @@ import { ClientManager } from "./clients/ClientManager";
 import { NpmClient } from "./clients/NpmClient";
 import { YarnClient } from "./clients/YarnClient";
 import { PnpmClient } from "./clients/PnpmClient";
+import { AddDependencyCommand } from "./commands/AddDependencyCommand";
 
 export function activate(context: vscode.ExtensionContext) {
   const app = bootstrap({
@@ -20,12 +21,14 @@ export function activate(context: vscode.ExtensionContext) {
   app.bind(YarnClient).toSelf();
   app.bind(PnpmClient).toSelf();
   app.bind(ClientManager).toSelf();
+  app.bind(AddDependencyCommand).toSelf();
+  app.resolve(AddDependencyCommand);
 
   app
     .get(Bus)
     .on(WebviewProviderEvents.registered, (webviewView: vscode.WebviewView) => {
       if (vscode.workspace.workspaceFolders) {
-        let watcher =
+        const watcher =
           vscode.workspace.createFileSystemWatcher("**/package.json");
         const notify = () =>
           webviewView.webview.postMessage({ type: "PACKAGE_JSON_UPDATED" });
@@ -34,17 +37,19 @@ export function activate(context: vscode.ExtensionContext) {
         watcher.onDidCreate(notify);
         context.subscriptions.push(watcher);
       }
+
       if (vscode.workspace.workspaceFolders) {
-        let watcher = vscode.workspace.createFileSystemWatcher(
-          "**/.unimportedrc.json"
-        );
-        const notify = () =>
-          webviewView.webview.postMessage({ type: "UNIMPORTEDRC_UPDATED" });
-        watcher.onDidChange(notify);
-        watcher.onDidDelete(notify);
-        watcher.onDidCreate(notify);
-        context.subscriptions.push(watcher);
+        // let watcher = vscode.workspace.createFileSystemWatcher(
+        //   "**/.unimportedrc.json"
+        // );
+        // const notify = () =>
+        //   webviewView.webview.postMessage({ type: "UNIMPORTEDRC_UPDATED" });
+        // watcher.onDidChange(notify);
+        // watcher.onDidDelete(notify);
+        // watcher.onDidCreate(notify);
+        // context.subscriptions.push(watcher);
       }
+
       vscode.workspace.onDidChangeConfiguration(() => {
         webviewView.webview.postMessage({ type: "CONFIG_UPDATED" });
       });

@@ -213,7 +213,7 @@ function handleSelect(option: Option) {
         "
         @keyup.esc="close"
         v-model="search"
-        class="placeholder-[color:var(--vscode-settings-textInputForeground, #999)] pr-6 overflow-ellipsis"
+        class="focus:outline-[color:var(--vscode-focusBorder)] placeholder-[color:var(--vscode-settings-textInputForeground, #999)] pr-6 overflow-ellipsis"
         :placeholder="isFocused ? 'Search' : placeholder(selected)"
         :class="{
           'cursor-pointer': !isFocused,

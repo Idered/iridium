@@ -1,6 +1,7 @@
 import { inject } from "vue";
 
 export type VSCode = {
+  postMessage: (message: any) => void;
   fetch: {
     get: <Result>(uri: string) => Promise<Result>;
     post: <Result>(uri: string, payload?: any) => Promise<Result>;

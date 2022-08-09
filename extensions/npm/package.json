@@ -1,6 +1,6 @@
 {
   "name": "npm",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "main": "./out/extension.js",
   "license": "MIT",
   "scripts": {
@@ -47,7 +47,8 @@
     "url": "https://github.com/Idered/iridium"
   },
   "activationEvents": [
-    "onView:iridium.npm"
+    "onView:iridium.npm",
+    "onCommand:iridium.npm.addDependency"
   ],
   "contributes": {
     "viewsContainers": {
@@ -68,6 +69,12 @@
         }
       ]
     },
+    "commands": [
+			{
+				"command": "iridium.npm.addDependency",
+				"title": "Node Dependencies: Add dependency"
+			}
+    ],
     "configuration": {
       "title": "Iridium",
       "properties": {
@@ -81,13 +88,44 @@
           "default": "npm",
           "description": "The package manager used to install packages."
         },
-        "iridium.npm.showAnalyzeTab": {
+        "iridium.npm.excludeVersions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "examples": [
+              "experimental", 
+              "nightly", 
+              "dev", 
+              "insiders",
+              "canary",
+              "next",
+              "beta",
+              "rc",
+              "pre",
+              "alpha"
+            ]
+          },
+          "default": [],
+          "description": "Versions containing these strings will be excluded from the list."
+        },
+        "iridium.npm.showShortcuts": {
           "type": "boolean",
           "default": true
         },
-        "iridium.npm.showProTab": {
+        "iridium.npm.showAlgoliaInfo": {
           "type": "boolean",
           "default": true
+        },
+        "iridium.npm.showResultDescription": {
+          "type": "boolean",
+          "default": true
+        },
+        "iridium.npm.maxNumberOfResults": {
+          "description": "The maximum number of results to show in the search results.",
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "maximum": 20
         }
       }
     }

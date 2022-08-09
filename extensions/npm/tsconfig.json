@@ -2,9 +2,10 @@
   "extends": "../../tsconfig.json",
   "include": ["src"],
   "compilerOptions": {
-    "sourceMap": false,
+    "sourceMap": true,
     "rootDir": "src",
-    "outDir": "./out"
+    "outDir": "./out",
+    "experimentalDecorators": true
   },
   "references": [{ "path": "../foundation" }]
 }
