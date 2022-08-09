@@ -1,6 +1,6 @@
 {
   "name": "npm",
-  "version": "0.7.1",
+  "version": "1.0.0",
   "main": "./out/extension.js",
   "license": "MIT",
   "scripts": {
@@ -15,7 +15,6 @@
     "email": "iam@kasper.io",
     "url": "https://kasper.io"
   },
-  "preview": true,
   "displayName": "Node Dependencies",
   "publisher": "idered",
   "description": "Node dependency manager.",
