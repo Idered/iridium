@@ -46,6 +46,7 @@ export const store = createStore<State>({
       showShortcuts: true,
       showResultDescription: true,
       showAnalyzeTab: true,
+      excludeVersions: [],
       showProTab: true,
       showAlgoliaInfo: true,
       maxNumberOfResults: 4,
