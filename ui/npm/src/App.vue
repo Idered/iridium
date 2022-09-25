@@ -244,7 +244,6 @@ body {
   font-size: var(--vscode-font-size);
   font-weight: var(--vscode-font-weight);
   font-family: var(--vscode-font-family);
-  background-color: var(--vscode-panel-background);
   padding: 0;
 }
 
@@ -262,7 +261,6 @@ body {
 
 <style scoped>
 .container {
-  background: var(--vscode-sideBar-background);
   position: relative;
   display: grid;
   grid-template-rows: auto 1fr auto;
