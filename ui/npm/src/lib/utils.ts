@@ -18,7 +18,11 @@ export const formatSize = (value: number) => {
     size = value / 1024 / 1024;
   }
 
-  return { unit, size };
+  return {
+    unit,
+    size,
+    toString: () => `${size.toFixed(1)} ${unit}`,
+  };
 };
 
 /**
@@ -110,4 +114,20 @@ export const groupPackageJsonFiles = (files: string[]) => {
 
     return groups;
   }, [] as any[]);
+};
+
+export const kFormat = (num: number) => {
+  const abs = Math.abs(num);
+  const sign = Math.sign(num);
+  const value =
+    abs > 9_999_999
+      ? `${(sign * (abs / 1_000_000)).toFixed(0)}M`
+      : abs > 999_999
+      ? `${(sign * (abs / 1_000_000)).toFixed(1).replace(/\.0$/, "")}M`
+      : abs > 9999
+      ? `${(sign * (abs / 1000)).toFixed(0)}K`
+      : abs > 999
+      ? `${(sign * (abs / 1000)).toFixed(1).replace(/\.0$/, "")}K`
+      : (sign * abs).toFixed(0);
+  return String(value);
 };

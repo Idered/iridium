@@ -47,6 +47,11 @@ export class API {
       `https://bundlephobia.com/api/size?package=${query}&record=true`
     );
   }
+  static getExportSizes(query: string) {
+    return API.request<GetExportSizesResponse>(
+      `https://bundlephobia.com/api/exports-sizes?package=${query}`
+    );
+  }
   static getPackageVersionsAndTags(query: string) {
     return API.request<GetPackageVersionsAndTagsResponse>(
       `https://data.jsdelivr.com/v1/package/npm/${query}`
@@ -238,6 +243,19 @@ export type GetInstalledPackagesResponse = {
 export interface GetPackageVersionsAndTagsResponse {
   tags: Record<string, string>;
   versions: string[];
+}
+
+export interface GetExportSizesResponse {
+  name: string;
+  version: string;
+  assets: {
+    name: string;
+    type: string;
+    size: number;
+    gzip: number;
+    parse: any;
+    path: string;
+  }[];
 }
 
 export interface GetSizeInfoResponse {

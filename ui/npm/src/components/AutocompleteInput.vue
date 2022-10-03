@@ -5,7 +5,7 @@ import { computed } from "vue";
 import { OnClickOutside } from "@vueuse/components";
 import { useStore } from "../lib/store";
 import { Package } from "../types";
-import { withUpdate } from "../lib/utils";
+import { withUpdate, formatSize } from "../lib/utils";
 import SearchIcon from "./icons/SearchIcon.vue";
 import { ErrorType } from "../enums";
 import Loader from "./Loader.vue";
@@ -16,6 +16,9 @@ import {
   API,
   GetPackageVersionsAndTagsResponse,
 } from "../lib/api";
+import CloudDownloadIcon from "./icons/CloudDownloadIcon.vue";
+import WeightIcon from "./icons/WeightIcon.vue";
+import FlameIcon from "./icons/FlameIcon.vue";
 
 enum State {
   Inactive,
@@ -196,14 +199,17 @@ watch(highlight, (value) => {
 watch(showVersionSuggestions, async (value, oldValue) => {
   if (value && !oldValue) {
     const suggestion = packageSuggestions.value[highlight.value];
+    console.log(suggestion);
     if (!suggestion) return;
     query.value = `${suggestion.name}@`;
     searchPosition.value = query.value.length;
-    versions.value = [];
     highlight.value = 0;
-    const res = await API.getPackageVersionsAndTags(packageName.value);
-    versions.value = res.versions;
-    tags.value = res.tags;
+    versions.value = Object.entries(suggestion.versions)
+      .sort(([, dateA], [, dateB]) => {
+        return new Date(dateB).getTime() - new Date(dateA).getTime();
+      })
+      .map(([version]) => version);
+    tags.value = suggestion.tags;
   }
   if (!value && oldValue) {
     highlight.value = 0;
@@ -232,6 +238,25 @@ watch(packageName, async (value) => {
     error.value = ErrorType.SuggestionsServiceIsNotResponding;
   }
   pendingRequests.value--;
+});
+
+const sizes = ref<Record<string, number | null>>({});
+const loadSizes = ref<any>(0);
+watch(packageSuggestions, async () => {
+  clearTimeout(loadSizes.value);
+  loadSizes.value = setTimeout(async () => {
+    packageSuggestions.value
+      .filter((item) => !item.name.startsWith("@types/"))
+      .filter((item) => sizes.value[item.name] === undefined)
+      .map(async (item) => {
+        try {
+          const size = await API.getSizeInfo(`${item.name}@${item.version}`);
+          sizes.value[item.name] = size.gzip;
+        } catch (err) {
+          sizes.value[item.name] = null;
+        }
+      });
+  }, 1000);
 });
 </script>
 
@@ -310,7 +335,10 @@ watch(packageName, async (value) => {
               @mouseenter="highlightItem(i)"
             >
               <div class="results__item--version">
-                <span class="results__item-title" v-text="item.version" />
+                <span
+                  class="results__item-title truncate"
+                  v-text="item.version"
+                />
                 <span class="results__item-tag" v-text="item.tag" />
               </div>
             </div>
@@ -389,6 +417,22 @@ watch(packageName, async (value) => {
                 "
               >
                 {{ item.description }}
+              </div>
+              <div
+                class="flex items-center text-[color:var(--vscode-descriptionForeground)] text-xs mt-1"
+              >
+                <CloudDownloadIcon width="16" height="16" />
+                <span class="ml-1">{{ item.humanDownloadsLast30Days }}</span>
+                <template v-if="sizes[item.name] && !item.deprecated">
+                  <WeightIcon width="12" height="12" class="ml-4" />
+                  <span class="ml-1">{{
+                    formatSize(sizes[item.name] || 0)
+                  }}</span>
+                </template>
+                <template v-if="item.deprecated">
+                  <FlameIcon width="16" height="16" class="ml-4" />
+                  <span class="ml-1">Deprecated</span>
+                </template>
               </div>
             </div>
           </div>

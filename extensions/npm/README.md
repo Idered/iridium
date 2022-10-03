@@ -3,84 +3,45 @@
 > Manage and analyze your Node.js dependencies.
 
 ## Features
+
 - 🔍 Fast autocomplete
 - 🚀 Detect outdated dependencies and easily update
 - 📦 Manage multiple package.json files in monorepo
 - 🔢 Analyze size and load speed of each dependency
 - 🧶 Support for `npm`, `yarn` and `pnpm`
 
+![](https://i.imgur.com/Znvqflw.gif)
+
 ## Usage
 
 Search field shortcuts:
+
 - `Up | Down` - Go up or down
 - `Enter | Click` - Install selected package
 - `Alt+Enter | Alt+Click` - Install selected package as dev dependency
 - `@` - Display list of package versions
 - `@@` - Display list of tagged package versions
-- 
-Shortcuts while focus is on installed package:
+- Shortcuts while focus is on installed package:
 - `Del` - Remove package
 - `Ctrl+Enter` - Update package to latest version based on the specified range
 - `Ctrl+Shift+Enter` - Update package to latest
 
 ### Config
 
-- `iridium.npm.packageManager` - **`npm`**, `yarn`, `pnpm`
-- `iridium.npm.showAnalyzeTab` - **`true`**, `false`
-
-### Installing latest package version
-
-To install latest version, just select package from list and press enter.
-
-![](https://i.imgur.com/UH79hIv.gif)
-
-### Installing specific package version
-
-To install specific package version, add `@` after package name - list of versions will popup. You can search for specific version by typing eg. `2.0.4` or add another `@` to get list of tagged versions. Try to type `react@@` to get list of tags.
-
-**Installing by version**
-![](https://i.imgur.com/TxhQHCI.gif)
-
-**Installing by tag**
-![](https://i.imgur.com/ICVvyzt.gif)
-
-### Outdated packages
-
-Outdated packages are marked by colored package version. Additional command is available for such packages - `upgrade to latest` ![](https://i.imgur.com/s5gasQG.png) which you can access by hovering specified package.
-
-![](https://i.imgur.com/Vk21sxS.gif)
-
-> **TIP**: To update all outdated packages to latest versions, use sync icon in bottom bar.
-
-![](https://i.imgur.com/LVcet2f.gif)
-
-### Change dependency type
-
-You can change dependency type from normal to devDependency by clicking ![](https://i.imgur.com/liMk91S.png) while hovering package item.
-
-![](https://i.imgur.com/wtZi17v.gif)
-
-### Removing package
-
-To remove package, click `x` while hovering package item.
-
-![](https://i.imgur.com/CZVMgg0.gif)
-
-### Analyze mode
-
-Analyze mode displays list of non dev dependencies with additional info:
-- minified size
-- minified + gzip size
-- download speed on slow 3G (400 kB/s)
-- download speed on slow 4G (1750 kB/s)
-
-![](https://i.imgur.com/EjfyFYq.gif)
+| Option                              | Values                    | Description                                                                                                                             |
+| ----------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `iridium.npm.packageManager`        | **`npm`**, `yarn`, `pnpm` | Package manager used to install when there's no lock file.                                                                              |
+| `iridium.npm.showShortcuts`         | **`true`**, `false`       | Show shortcuts section in search dropdown.                                                                                              |
+| `iridium.npm.showAlgoliaInfo`       | **`true`**, `false`       | Show Algolia credits in search dropdown.                                                                                                |
+| `iridium.npm.showResultDescription` | **`true`**, `false`       | Show package description in search dropdown.                                                                                            |
+| `iridium.npm.excludeVersions`       | `[]`                      | Exclude package versions containing specified strings. For example you can add `beta` to exclude all versions including `beta` in name. |
+| `iridium.npm.maxNumberOfResults`    | `4`                       | Number of packages to display in search dropdown.                                                                                       |
 
 ## Powered by
 
 This extension wouldn't exist without these superb services ❤️
 
-- [npms.io](https://npms.io) - search packages by names
+- [Algolia](https://www.algolia.com/) - search packages by name
 - [jsdelivr.com](https://www.jsdelivr.com) - get package tags and versions
 - [bundlephobia.com](https://bundlephobia.com) - get package size info
 

@@ -20,6 +20,6 @@
 
 ## Extensions
 
-- [Node Dependencies](./extensions/npm/README.md) - Public beta - [View in Marketplace](https://marketplace.visualstudio.com/items?itemName=idered.npm)
+- [Node Dependencies](./extensions/npm/README.md) - [View in Marketplace](https://marketplace.visualstudio.com/items?itemName=idered.npm)
 - [Database](./extensions/database/README.md) - Public beta - [View in Marketplace](https://marketplace.visualstudio.com/items?itemName=idered.iridium-database)
 - Deploy - In development
