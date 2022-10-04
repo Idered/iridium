@@ -12,6 +12,7 @@ export class ConfigController extends Controller {
       showAlgoliaInfo: config.get("showAlgoliaInfo"),
       showShortcuts: config.get("showShortcuts"),
       maxNumberOfResults: config.get("maxNumberOfResults"),
+      analyze: config.get("analyze"),
     };
   }
 }

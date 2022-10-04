@@ -1,19 +1,42 @@
 <template>
   <div
-    class="grid-cols-4 px-3 py-2 grid text-xs border-t mt-2 border-t-[color:var(--vscode-panel-border)]"
+    class="px-3 py-2 grid text-xs border-t mt-2 border-t-[color:var(--vscode-panel-border)]"
+    :style="{
+      gridTemplateColumns: `1fr ${columns.length * 65}px`,
+    }"
   >
-    <Stat :value="totalMinSize" type="size" label="Min" />
-    <Stat :value="totalGZIPSize" type="size" label="Min + GZIP" />
-    <Stat
-      :value="getTimeFromSize(totalGZIPSize).slow3G"
-      type="time"
-      label="Slow 3G"
-    />
-    <Stat
-      :value="getTimeFromSize(totalGZIPSize).slow4G"
-      type="time"
-      label="Slow 4G"
-    />
+    <div></div>
+    <div
+      class="grid"
+      :style="{
+        gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
+      }"
+    >
+      <Stat
+        v-if="columns.includes('min')"
+        :value="totalMinSize"
+        type="size"
+        label="Min"
+      />
+      <Stat
+        v-if="columns.includes('gzip')"
+        :value="totalGZIPSize"
+        type="size"
+        label="Min + GZIP"
+      />
+      <Stat
+        v-if="columns.includes('slow3G')"
+        :value="getTimeFromSize(totalGZIPSize).slow3G"
+        type="time"
+        label="Slow 3G"
+      />
+      <Stat
+        v-if="columns.includes('slow4G')"
+        :value="getTimeFromSize(totalGZIPSize).slow4G"
+        type="time"
+        label="Slow 4G"
+      />
+    </div>
   </div>
 </template>
 
@@ -22,6 +45,9 @@ import { computed, PropType } from "vue";
 import { PackageSizeInfo } from "../../types";
 import { getTimeFromSize } from "../../lib/utils";
 import Stat from "../Stat.vue";
+import { useStore } from "../../lib/store";
+const store = useStore();
+const columns = computed(() => store.state.config.analyze.columns);
 
 const props = defineProps({
   sizeInfo: {

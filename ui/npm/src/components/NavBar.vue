@@ -1,29 +1,25 @@
 <template>
-  <div v-if="view === View.Analyze" class="flex">
+  <div
+    v-if="view === View.Analyze"
+    class="grid grid-cols-[32px_1fr_32px] justify-items-center items-center px-3 border-b border-b-[color:var(--vscode-panel-border)]"
+  >
     <a
-      class="flex items-center mx-3 align"
+      class="flex items-center h-8 w-8"
       @click="navigateTo(View.Manage)"
       role="button"
       aria-label="Go back"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        aria-hidden="true"
-        role="img"
-        class="iconify iconify--codicon"
-        width="32"
-        height="32"
-        preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 16 16"
-      >
+      <svg width="16" height="16" viewBox="0 0 16 16">
         <path
           fill="currentColor"
-          d="M6.5 10.7L4 8.2v-.7L6.5 5l.71.7l-1.64 1.65h5.57v1H5.57L7.22 10l-.72.7z"
-        ></path>
+          fill-rule="evenodd"
+          d="m7 3.093l-5 5V8.8l5 5l.707-.707l-4.146-4.147H14v-1H3.56L7.708 3.8L7 3.093z"
+          clip-rule="evenodd"
+        />
       </svg>
-      Back to dependencies
     </a>
+    <div class="uppercase tracking-wider text-xs font-bold">Analyze</div>
+    <div></div>
   </div>
 </template>
 

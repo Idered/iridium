@@ -26,6 +26,9 @@ export interface State {
     showProTab: boolean;
     showAlgoliaInfo: boolean;
     maxNumberOfResults: number;
+    analyze: {
+      columns: string[];
+    };
   };
 }
 
@@ -50,6 +53,9 @@ export const store = createStore<State>({
       showProTab: true,
       showAlgoliaInfo: true,
       maxNumberOfResults: 4,
+      analyze: {
+        columns: [],
+      },
     },
     sizeInfo: {},
     depCheck: null,

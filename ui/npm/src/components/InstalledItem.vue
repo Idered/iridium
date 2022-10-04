@@ -31,6 +31,7 @@ const props = defineProps({
 });
 
 const store = useStore();
+const columns = computed(() => store.state.config.analyze.columns);
 const view = computed(() => store.state.view);
 const coercedVersion = computed(
   () =>
@@ -145,7 +146,17 @@ const handleDelete = (event: KeyboardEvent) => {
     @keydown.ctrl.enter.exact.prevent="updatePackageToMaxSatisfying"
     @keydown.ctrl.shift.enter.exact.prevent="updatePackageToLatest"
   >
-    <div class="content">
+    <div
+      class="relative"
+      :class="{
+        'flex items-center justify-between': view === View.Manage,
+        grid: view === View.Analyze,
+      }"
+      :style="{
+        gridTemplateColumns:
+          view === View.Analyze ? `1fr ${columns.length * 65}px` : undefined,
+      }"
+    >
       <Loader class="icon" v-if="isUpdating" />
       <span
         class="name"
@@ -269,12 +280,34 @@ const handleDelete = (event: KeyboardEvent) => {
           </a>
         </div>
       </div>
-    </div>
-    <div class="size-info" v-if="view === View.Analyze && sizeInfo">
-      <Stat :value="sizeInfo.size" type="size" />
-      <Stat :value="sizeInfo.gzip" type="size" />
-      <Stat :value="sizeInfo.threeG" type="time" />
-      <Stat :value="sizeInfo.fourG" type="time" />
+      <div
+        class="size-info grid"
+        :style="{
+          gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
+        }"
+        v-if="view === View.Analyze && sizeInfo"
+      >
+        <Stat
+          v-if="columns.includes('min')"
+          :value="sizeInfo.size"
+          type="size"
+        />
+        <Stat
+          v-if="columns.includes('gzip')"
+          :value="sizeInfo.gzip"
+          type="size"
+        />
+        <Stat
+          v-if="columns.includes('slow3G')"
+          :value="sizeInfo.threeG"
+          type="time"
+        />
+        <Stat
+          v-if="columns.includes('slow4G')"
+          :value="sizeInfo.fourG"
+          type="time"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -287,19 +320,6 @@ const handleDelete = (event: KeyboardEvent) => {
   margin: 1px;
   padding: 0 0.75rem;
   line-height: 18px;
-  position: relative;
-}
-
-.item--analyze:focus-within .name,
-.item--analyze:focus .name,
-.item--analyze:hover .name {
-  padding: 5px 0 23px 0;
-}
-
-.content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   position: relative;
 }
 
@@ -406,13 +426,10 @@ const handleDelete = (event: KeyboardEvent) => {
 }
 
 .size-info {
-  display: grid;
-  grid-column: 1/4;
   margin-top: 4px;
   column-gap: 0.25rem;
   height: 14px;
   max-height: 14px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
   width: 100%;
 }
 </style>

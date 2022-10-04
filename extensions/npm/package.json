@@ -107,6 +107,20 @@
           "default": [],
           "description": "Versions containing these strings will be excluded from the list."
         },
+        "iridium.npm.analyze.columns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "examples": [
+              "min", 
+              "gzip", 
+              "slow3G", 
+              "slow4G"
+            ]
+          },
+          "default": ["gzip", "slow3G"],
+          "description": "Columns to show in the analyze view."
+        },
         "iridium.npm.showShortcuts": {
           "type": "boolean",
           "default": true
