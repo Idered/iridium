@@ -11,6 +11,7 @@ export default (router: Router) => {
     PackageJsonController,
     "showUpdateConfirmation",
   ]);
+  router.post("/security-audit", [PackageJsonController, "getSecurityAudit"]);
   // router.post("/depcheck", [PackageJsonController, "runDepCheck"]);
   router.post("/installed", [PackageJsonController, "getInstalledPackages"]);
   router.post("/install", [PackageJsonController, "installPackages"]);

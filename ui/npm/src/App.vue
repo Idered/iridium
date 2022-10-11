@@ -3,7 +3,7 @@
 
   <div
     v-if="packageJSONFiles.length !== 0"
-    class="container"
+    class="relative grid grid-rows-[auto_1fr_auto] items-start h-screen"
     @contextmenu.prevent
   >
     <div>
@@ -40,6 +40,7 @@
         :installed-packages-versions="installedPackagesVersions"
         :size-info="sizeInfo"
       />
+      <DetailsViewContent />
       <!-- <ProViewContent v-if="view === View.Pro" /> -->
       <AnalyzeViewFooter v-if="view === View.Analyze" :size-info="sizeInfo" />
     </div>
@@ -59,7 +60,11 @@
 import { computed, defineComponent, inject, onMounted, ref, watch } from "vue";
 import VSelect from "./components/VSelect.vue";
 import { Package } from "./types";
-import { groupPackageJsonFiles, withUpdate } from "./lib/utils";
+import {
+  groupPackageJsonFiles,
+  isSupportedVersion,
+  withUpdate,
+} from "./lib/utils";
 import { API } from "./lib/api";
 import { Order, View } from "./enums";
 import coerce from "semver/functions/coerce";
@@ -69,13 +74,13 @@ import NavBar from "./components/NavBar.vue";
 import AnalyzeViewFooter from "./components/analyze/AnalyzeViewFooter.vue";
 import EmptyView from "./components/EmptyView.vue";
 import AnalyzeViewHeader from "./components/analyze/AnalyzeViewHeader.vue";
-import ProViewContent from "./components/support/SupportViewContent.vue";
 import { useStore } from "./lib/store";
 import AutocompleteInput from "./components/AutocompleteInput.vue";
 import { usePackageSizeInfo } from "./lib/use-package-size-info";
 import ManageViewContent from "./components/manage/ManageViewContent.vue";
 import FilterInput from "./components/FilterInput.vue";
 import { useFuse } from "@vueuse/integrations/useFuse";
+import DetailsViewContent from "./components/DetailsViewContent.vue";
 
 API.setVSCode(inject<VSCode>("vscode") as VSCode);
 
@@ -147,6 +152,17 @@ const byTypeAndName = (a: Package, b: Package) => {
   }
   return a.name.localeCompare(b.name);
 };
+const getAudit = async () => {
+  try {
+    if (!store.state.config.runAudit) {
+      return;
+    }
+    const audit = await API.getSecurityAudit();
+    store.commit("setAudit", audit);
+  } catch (err) {
+    store.commit("setAudit", null);
+  }
+};
 const getPackages = async () => {
   store.commit("setInstalledPackages", await API.getInstalledPackages());
 };
@@ -162,13 +178,6 @@ const getPackageJSONFiles = async () => {
 //     store.commit("setDepCheck", null);
 //   }
 // };
-const isSupportedVersion = (version: string) => {
-  return (
-    /^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
-      version
-    ) === false
-  );
-};
 const loadPackagesSizeInfo = async () => {
   store.commit("setSizeInfo", {});
   for (const item of displayedPackages.value) {
@@ -195,6 +204,7 @@ watch(packageJSON, (value) => {
   if (value) {
     API.setPackageJSON(packageJSON.value);
     getPackages();
+    getAudit();
   }
 });
 
@@ -223,6 +233,7 @@ window.addEventListener("message", async (message) => {
   if (message.data?.type === "PACKAGE_JSON_UPDATED") {
     getPackageJSONFiles();
     getPackages();
+    getAudit();
   }
   if (message.data?.type === "CONFIG_UPDATED") {
     store.dispatch("getConfig");
@@ -231,6 +242,7 @@ window.addEventListener("message", async (message) => {
   //   runDepCheck();
   // }
 });
+
 const displayPackageJsonFiles = computed(() => {
   return groupPackageJsonFiles(packageJSONFiles.value);
 });
@@ -260,23 +272,9 @@ body {
 </style>
 
 <style scoped>
-.container {
-  position: relative;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  align-content: flex-start;
-  height: 100vh;
-}
-
-.header {
-  /* display: grid;
-  align-items: center;
-  row-gap: 0.5rem;
-  margin: 0 0.75rem 0; */
-}
-
 .content {
   width: 100%;
+  height: 100%;
   position: relative;
   overflow-y: auto;
   overflow-x: hidden;

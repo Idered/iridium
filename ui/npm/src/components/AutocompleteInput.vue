@@ -199,7 +199,6 @@ watch(highlight, (value) => {
 watch(showVersionSuggestions, async (value, oldValue) => {
   if (value && !oldValue) {
     const suggestion = packageSuggestions.value[highlight.value];
-    console.log(suggestion);
     if (!suggestion) return;
     query.value = `${suggestion.name}@`;
     searchPosition.value = query.value.length;

@@ -9,6 +9,7 @@ export abstract class Client {
     version: string;
     isDevDependency: boolean;
   }[];
+  abstract audit(): any;
   abstract install(args: { query: string; isDev?: boolean }): void;
   abstract update(args: { query: string }): void;
   abstract remove(args: { packages: string[] }): void;

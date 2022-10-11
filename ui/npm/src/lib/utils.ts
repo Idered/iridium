@@ -1,5 +1,8 @@
-import { DownloadSpeed } from "../enums";
-import { store } from "./store";
+import { Package } from "../types";
+import { useQuery } from "vue-query";
+import { DownloadSpeed, View } from "../enums";
+import { API } from "./api";
+import { store, useStore } from "./store";
 
 /**
  * @link https://github.com/pastelsky/bundlephobia/blob/28bde79bad73cd1ba0797889f2b77d11aac3424c/utils/index.js#L11
@@ -130,4 +133,12 @@ export const kFormat = (num: number) => {
       ? `${(sign * (abs / 1000)).toFixed(1).replace(/\.0$/, "")}K`
       : (sign * abs).toFixed(0);
   return String(value);
+};
+
+export const isSupportedVersion = (version: string) => {
+  return (
+    /^file:|^link:|^https?:|^git:|^git\+|^github:|^gist:|^bitbucket:|^gitlab:/.test(
+      version
+    ) === false
+  );
 };

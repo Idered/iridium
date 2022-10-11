@@ -31,6 +31,7 @@ Search field shortcuts:
 | Option                              | Values                    | Description                                                                                                                             |
 | ----------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `iridium.npm.packageManager`        | **`npm`**, `yarn`, `pnpm` | Package manager used to install when there's no lock file.                                                                              |
+| `iridium.npm.runAudit`              | **`true`**, `false`       | Automatically run security audit(yarn, pnpm).                                                                                           |
 | `iridium.npm.showShortcuts`         | **`true`**, `false`       | Show shortcuts section in search dropdown.                                                                                              |
 | `iridium.npm.showAlgoliaInfo`       | **`true`**, `false`       | Show Algolia credits in search dropdown.                                                                                                |
 | `iridium.npm.showResultDescription` | **`true`**, `false`       | Show package description in search dropdown.                                                                                            |

@@ -1,6 +1,6 @@
 import { InjectionKey } from "vue";
 import { createStore, useStore as baseUseStore, Store } from "vuex";
-import { API, DepCheck } from "./api";
+import { API, Audit, DepCheck } from "./api";
 import { AnalyzeSortType, ErrorType, Order, View } from "../enums";
 import { Package, PackageSizeInfo } from "../types";
 
@@ -18,10 +18,13 @@ export interface State {
   updatingPackages: string[];
   sizeInfo: Record<string, PackageSizeInfo>;
   depCheck: DepCheck | null;
+  audit: Audit | null;
+  selectedPackage: string | null;
   config: {
     showShortcuts: boolean;
     showResultDescription: boolean;
     excludeVersions: string[];
+    runAudit: boolean;
     showAnalyzeTab: boolean;
     showProTab: boolean;
     showAlgoliaInfo: boolean;
@@ -44,10 +47,13 @@ export const store = createStore<State>({
     errors: new Map(),
     view: View.Manage,
     packageJSON: null,
+    selectedPackage: null,
     packageJSONFiles: [],
+    audit: null,
     config: {
       showShortcuts: true,
       showResultDescription: true,
+      runAudit: true,
       showAnalyzeTab: true,
       excludeVersions: [],
       showProTab: true,
@@ -63,6 +69,17 @@ export const store = createStore<State>({
     updatingPackages: [],
   },
   getters: {
+    isVulnerable: (state) => (name: string) =>
+      Object.values(state.audit?.advisories || {}).some((item) =>
+        item.findings.some((find) =>
+          find.paths.some((path) => {
+            const validPath = path.replace(/^\.>/, "");
+            return validPath.startsWith(`${name}>`) || validPath === name;
+          })
+        )
+      ),
+    getPackageByName: (state) => (name: string) =>
+      state.installedPackages.find((p) => p.name === name),
     hasError: (state) => (type: ErrorType) => state.errors.has(type),
     getError: (state) => (type: ErrorType) => state.errors.get(type),
     totalGZIPSize(state) {
@@ -76,6 +93,12 @@ export const store = createStore<State>({
     },
   },
   mutations: {
+    setAudit(state, audit: Audit | null) {
+      state.audit = audit;
+    },
+    setSelectedPackage(state, packageName: string | null) {
+      state.selectedPackage = packageName;
+    },
     setFilterQuery(state, query: string) {
       state.filterQuery = query;
     },

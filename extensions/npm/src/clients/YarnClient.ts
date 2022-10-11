@@ -4,7 +4,7 @@ import { dirname } from "path";
 import { Client } from "./Client";
 import { Uri } from "vscode";
 import { injectable } from "foundation";
-
+import jsonl from "jsonl-parse-stringify";
 @injectable()
 export class YarnClient extends Client {
   #uri: Uri;
@@ -13,6 +13,36 @@ export class YarnClient extends Client {
     this.#uri = uri;
     this.#cwd = dirname(uri.fsPath);
     return this;
+  }
+  audit() {
+    const { stdout } = spawn.sync("yarn", ["audit", "--json"], {
+      cwd: this.#cwd,
+    });
+    try {
+      const [summary, ...items] = jsonl
+        .parse(stdout.toString())
+        .reverse() as any;
+
+      const advisories = items.reduce(
+        (all, { data: { advisory } }) => ({
+          ...all,
+          [advisory.id]: advisory,
+        }),
+        {}
+      );
+      const output = {
+        advisories,
+        muted: [],
+        actions: items.map(({ data: { resolution } }) => ({
+          module: advisories[resolution.id].module_name,
+          resolves: resolution,
+        })),
+        metadata: summary.data,
+      };
+      return output;
+    } catch (err) {
+      return null;
+    }
   }
   getAllPackages() {
     const contents = fs.readFileSync(this.#uri.fsPath, "utf8");

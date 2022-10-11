@@ -14,6 +14,14 @@ export class NpmClient extends Client {
     this.#cwd = dirname(uri.fsPath);
     return this;
   }
+  audit() {
+    return null;
+    // const { stdout } = spawn.sync("npm", ["audit", "--json"], {
+    //   cwd: this.#cwd,
+    // });
+    // console.log(JSON.parse(stdout.toString()));
+    // return JSON.parse(stdout.toString());
+  }
   getAllPackages() {
     const contents = fs.readFileSync(this.#uri.fsPath, "utf8");
     const json = JSON.parse(contents);

@@ -2,6 +2,7 @@ export enum View {
   Manage,
   Analyze,
   Pro,
+  Details,
 }
 
 export enum DownloadSpeed {

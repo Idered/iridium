@@ -34,6 +34,14 @@ export class API {
       hitsPerPage: Math.min(Math.max(count, 1), 20),
     });
   }
+  static getPackageDetails(packageName: string) {
+    return API.algolia
+      .search<AlgoliaSearchResponse>(packageName, {
+        analyticsTags: ["idered-vscode"],
+        hitsPerPage: 1,
+      })
+      .then((res) => res.hits[0]);
+  }
   static async getIsPackageDeprecated(query: string) {
     const res = await API.algolia.search<AlgoliaSearchResponse>(query, {
       analyticsTags: ["idered-vscode"],
@@ -47,9 +55,14 @@ export class API {
       `https://bundlephobia.com/api/size?package=${query}&record=true`
     );
   }
-  static getExportSizes(query: string) {
+  static getSecurityAudit() {
+    return API.vscode.fetch.post(`/security-audit`, {
+      packageJSON: API.packageJSON,
+    });
+  }
+  static getExportSizes(packageName: string, version: string) {
     return API.request<GetExportSizesResponse>(
-      `https://bundlephobia.com/api/exports-sizes?package=${query}`
+      `https://bundlephobia.com/api/exports-sizes?package=${packageName}@${version}`
     );
   }
   static getPackageVersionsAndTags(query: string) {
@@ -281,4 +294,71 @@ export interface GetSizeInfoResponse {
   scoped: boolean;
   size: number;
   version: string;
+}
+
+export interface Audit {
+  actions: {
+    isMajor: boolean;
+    action: string;
+    resolves: {
+      id: number;
+      path: string;
+      dev: boolean;
+      optional: boolean;
+      bundled: boolean;
+    }[];
+    module: string;
+    target: string;
+  }[];
+  advisories: Record<string, Advisory>;
+  muted: any[];
+  metadata: {
+    vulnerabilities: {
+      info: number;
+      low: number;
+      moderate: number;
+      high: number;
+      critical: number;
+    };
+    dependencies: number;
+    devDependencies: number;
+    optionalDependencies: number;
+    totalDependencies: number;
+  };
+}
+
+export interface Advisory {
+  finding: {
+    version: string;
+    path: string;
+  };
+  findings: {
+    version: string;
+    paths: string[];
+  }[];
+  metadata: any;
+  vulnerable_versions: string;
+  module_name: string;
+  severity: string;
+  github_advisory_id: string;
+  cves: string[];
+  access: string;
+  patched_versions: string;
+  cvss: {
+    score: number;
+    vectorString: string;
+  };
+  updated: string;
+  recommendation: string;
+  cwe: string[];
+  found_by: any;
+  deleted: any;
+  id: number;
+  references: string;
+  created: string;
+  reported_by: any;
+  title: string;
+  npm_advisory_id: any;
+  overview: string;
+  url: string;
 }

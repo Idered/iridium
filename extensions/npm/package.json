@@ -69,10 +69,10 @@
       ]
     },
     "commands": [
-			{
-				"command": "iridium.npm.addDependency",
-				"title": "Node Dependencies: Add dependency"
-			}
+      {
+        "command": "iridium.npm.addDependency",
+        "title": "Node Dependencies: Add dependency"
+      }
     ],
     "configuration": {
       "title": "Iridium",
@@ -92,9 +92,9 @@
           "items": {
             "type": "string",
             "examples": [
-              "experimental", 
-              "nightly", 
-              "dev", 
+              "experimental",
+              "nightly",
+              "dev",
               "insiders",
               "canary",
               "next",
@@ -112,14 +112,22 @@
           "items": {
             "type": "string",
             "examples": [
-              "min", 
-              "gzip", 
-              "slow3G", 
+              "min",
+              "gzip",
+              "slow3G",
               "slow4G"
             ]
           },
-          "default": ["gzip", "slow3G"],
+          "default": [
+            "gzip",
+            "slow3G"
+          ],
           "description": "Columns to show in the analyze view."
+        },
+        "iridium.npm.runAudit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically run security audit(yarn, pnpm)."
         },
         "iridium.npm.showShortcuts": {
           "type": "boolean",
@@ -145,9 +153,12 @@
   },
   "dependencies": {
     "@types/uuid": "^8.3.0",
+    "axios": "1.1.0",
     "cross-spawn": "^7.0.3",
     "foundation": "link:../foundation/foundation",
+    "jsonl-parse-stringify": "1.0.3",
     "reflect-metadata": "^0.1.13",
+    "semver": "7.3.8",
     "ts-loader": "^8.0.14",
     "unimported": "^1.19.1",
     "uuid": "^8.3.2",
@@ -158,6 +169,7 @@
     "@types/cross-spawn": "^6.0.2",
     "@types/mocha": "^8.0.4",
     "@types/node": "^16.9.6",
+    "@types/semver": "^7.3.12",
     "@types/vscode": "^1.52.0",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",

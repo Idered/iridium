@@ -4,6 +4,8 @@ import { inject } from "foundation";
 import { ClientManager } from "../clients/ClientManager";
 import { dirname, relative } from "path";
 import * as fs from "fs";
+import axios from "axios";
+import semver = require("semver");
 // import depcheck from "./unimported-fn";
 
 export class PackageJsonController extends Controller {
@@ -21,6 +23,10 @@ export class PackageJsonController extends Controller {
 
   async getInstalledPackages(data: { packageJSON: string }) {
     return this.clientManager.getClient(data.packageJSON).getAllPackages();
+  }
+
+  async getSecurityAudit(data: { packageJSON: string }) {
+    return this.clientManager.getClient(data.packageJSON).audit();
   }
 
   async installPackages(data: {

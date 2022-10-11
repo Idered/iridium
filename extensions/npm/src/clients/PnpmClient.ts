@@ -14,6 +14,16 @@ export class PnpmClient extends Client {
     this.#cwd = dirname(uri.fsPath);
     return this;
   }
+  audit() {
+    const { stdout } = spawn.sync("pnpm", ["audit", "--json"], {
+      cwd: this.#cwd,
+    });
+    try {
+      return JSON.parse(stdout.toString());
+    } catch (err) {
+      return null;
+    }
+  }
   getAllPackages() {
     const contents = fs.readFileSync(this.#uri.fsPath, "utf8");
     const json = JSON.parse(contents);

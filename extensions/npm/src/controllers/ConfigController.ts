@@ -5,6 +5,7 @@ export class ConfigController extends Controller {
   async getConfig() {
     const config = workspace.getConfiguration("iridium.npm");
     return {
+      runAudit: config.get("runAudit"),
       showAnalyzeTab: config.get("showAnalyzeTab"),
       showProTab: config.get("showProTab"),
       showResultDescription: config.get("showResultDescription"),
