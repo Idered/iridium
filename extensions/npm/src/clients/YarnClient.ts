@@ -65,6 +65,8 @@ export class YarnClient extends Client {
     spawn.sync("yarn", args, {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   update({ query }: { query: string }) {
@@ -72,18 +74,24 @@ export class YarnClient extends Client {
     spawn.sync("yarn", args, {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   remove({ packages }: { packages: string[] }) {
     spawn.sync("yarn", ["remove", ...packages], {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   swapType(args: { packageName: string; isDev?: boolean; version?: string }) {
     spawn.sync("yarn", ["remove", args.packageName], {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
     spawn.sync(
       "yarn",
@@ -95,6 +103,8 @@ export class YarnClient extends Client {
       {
         stdio: "inherit",
         cwd: this.#cwd,
+        windowsHide: true,
+        shell: false
       }
     );
   }

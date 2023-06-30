@@ -18,6 +18,8 @@ export class NpmClient extends Client {
     return null;
     // const { stdout } = spawn.sync("npm", ["audit", "--json"], {
     //   cwd: this.#cwd,
+    //   windowsHide: true,
+    //   shell: false
     // });
     // console.log(JSON.parse(stdout.toString()));
     // return JSON.parse(stdout.toString());
@@ -43,6 +45,8 @@ export class NpmClient extends Client {
     spawn.sync("npm", args, {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   update({ query }: { query: string }) {
@@ -50,12 +54,16 @@ export class NpmClient extends Client {
     spawn.sync("npm", args, {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   remove({ packages }: { packages: string[] }) {
     spawn.sync("npm", ["remove", ...packages], {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   swapType(args: { packageName: string; isDev?: boolean; version?: string }) {
@@ -69,6 +77,8 @@ export class NpmClient extends Client {
       {
         stdio: "inherit",
         cwd: this.#cwd,
+        windowsHide: true,
+        shell: false
       }
     );
   }

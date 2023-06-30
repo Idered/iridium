@@ -17,6 +17,8 @@ export class PnpmClient extends Client {
   audit() {
     const { stdout } = spawn.sync("pnpm", ["audit", "--json"], {
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
     try {
       return JSON.parse(stdout.toString());
@@ -45,6 +47,8 @@ export class PnpmClient extends Client {
     spawn.sync("pnpm", args, {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   update({ query }: { query: string }) {
@@ -52,12 +56,16 @@ export class PnpmClient extends Client {
     spawn.sync("pnpm", args, {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   remove({ packages }: { packages: string[] }) {
     spawn.sync("pnpm", ["remove", ...packages], {
       stdio: "inherit",
       cwd: this.#cwd,
+      windowsHide: true,
+      shell: false
     });
   }
   swapType(args: { packageName: string; isDev?: boolean; version?: string }) {
@@ -71,6 +79,8 @@ export class PnpmClient extends Client {
       {
         stdio: "inherit",
         cwd: this.#cwd,
+        windowsHide: true,
+        shell: false
       }
     );
   }
