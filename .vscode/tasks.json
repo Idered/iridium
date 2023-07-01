@@ -23,7 +23,7 @@
           ],
           "background": {
             "activeOnStart": true,
-            "beginsPattern": "⚡Vite dev server running at:",
+            "beginsPattern": "dev server running at:",
             "endsPattern": "ready in \\d+ms"
           }
         }
@@ -58,7 +58,7 @@
           ],
           "background": {
             "activeOnStart": true,
-            "beginsPattern": "⚡Vite dev server running at:",
+            "beginsPattern": "dev server running at:",
             "endsPattern": "ready in \\d+ms"
           }
         }
@@ -93,7 +93,7 @@
           ],
           "background": {
             "activeOnStart": true,
-            "beginsPattern": "⚡Vite dev server running at:",
+            "beginsPattern": "dev server running at:",
             "endsPattern": "ready in \\d+ms"
           }
         }
@@ -128,7 +128,7 @@
           ],
           "background": {
             "activeOnStart": true,
-            "beginsPattern": "⚡Vite dev server running at:",
+            "beginsPattern": "dev server running at:",
             "endsPattern": "ready in \\d+ms"
           }
         }
