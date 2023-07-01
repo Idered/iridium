@@ -1,7 +1,7 @@
 export enum View {
   Manage,
   Analyze,
-  Pro,
+  Support,
   Details,
 }
 

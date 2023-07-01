@@ -26,7 +26,7 @@ export interface State {
     excludeVersions: string[];
     runAudit: boolean;
     showAnalyzeTab: boolean;
-    showProTab: boolean;
+    showSupportIcon: boolean;
     showAlgoliaInfo: boolean;
     maxNumberOfResults: number;
     analyze: {
@@ -56,7 +56,7 @@ export const store = createStore<State>({
       runAudit: true,
       showAnalyzeTab: true,
       excludeVersions: [],
-      showProTab: true,
+      showSupportIcon: true,
       showAlgoliaInfo: true,
       maxNumberOfResults: 4,
       analyze: {

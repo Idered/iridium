@@ -139,6 +139,10 @@
           "type": "boolean",
           "default": true
         },
+        "iridium.npm.showSupportIcon": {
+          "type": "boolean",
+          "default": true
+        },
         "iridium.npm.showResultDescription": {
           "type": "boolean",
           "default": true

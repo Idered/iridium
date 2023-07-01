@@ -20,4 +20,5 @@ export default (router: Router) => {
   router.post("/change-version", [PackageJsonController, "changeVersion"]);
   router.post("/update", [PackageJsonController, "updatePackages"]);
   router.get("/config", [ConfigController, "getConfig"]);
+  router.post("/hide-support-icon", [ConfigController, "hideSupportIcon"]);
 };

@@ -135,6 +135,9 @@ export class API {
       showAnalyzeTab: boolean;
     }>("/config");
   }
+  static hideSupportIcon() {
+    return API.vscode.fetch.post<void>("/hide-support-icon");
+  }
 }
 
 export type AlgoliaSearchResponse = {

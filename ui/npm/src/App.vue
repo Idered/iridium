@@ -41,7 +41,7 @@
         :size-info="sizeInfo"
       />
       <DetailsViewContent />
-      <!-- <ProViewContent v-if="view === View.Pro" /> -->
+      <SupportViewContent v-if="view === View.Support" />
       <AnalyzeViewFooter v-if="view === View.Analyze" :size-info="sizeInfo" />
     </div>
 
@@ -81,6 +81,7 @@ import ManageViewContent from "./components/manage/ManageViewContent.vue";
 import FilterInput from "./components/FilterInput.vue";
 import { useFuse } from "@vueuse/integrations/useFuse";
 import DetailsViewContent from "./components/DetailsViewContent.vue";
+import SupportViewContent from "./components/support/SupportViewContent.vue";
 
 API.setVSCode(inject<VSCode>("vscode") as VSCode);
 
