@@ -89,6 +89,7 @@ export const withUpdate = async (
 
 export const groupPackageJsonFiles = (files: string[]) => {
   return files.reduce((groups, item) => {
+    item = item.replace("\\", '/')
     const parts = item.split("/");
     const group = groups.find((el) => el.group === parts[0]);
     if (parts[0] === "package.json") {
