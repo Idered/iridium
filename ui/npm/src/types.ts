@@ -1,6 +1,9 @@
+import { SemVer } from "semver";
+
 export type Package = {
   name: string;
   version: string;
+  maxSatisfyingVersion?: string | SemVer | null;
   isDevDependency: boolean;
 };
 

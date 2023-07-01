@@ -47,11 +47,14 @@ export class PackageJsonController extends Controller {
   }
 
   async updatePackages(data: {
-    packages: { name: string }[];
+    packages: { name: string; maxSatisfyingVersion: string }[];
     packageJSON: string;
   }) {
     const query = data.packages
       .map((item) => {
+        if (item.maxSatisfyingVersion) {
+          return `${item.name}@${item.maxSatisfyingVersion}`;
+        }
         return item.name;
       })
       .join(" ");

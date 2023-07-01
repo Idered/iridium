@@ -7,6 +7,7 @@ import { WebviewProviderEvents } from "foundation/Webview/WebviewProvider";
 import { ClientManager } from "./clients/ClientManager";
 import { NpmClient } from "./clients/NpmClient";
 import { YarnClient } from "./clients/YarnClient";
+import { BunClient } from "./clients/BunClient";
 import { PnpmClient } from "./clients/PnpmClient";
 import { AddDependencyCommand } from "./commands/AddDependencyCommand";
 
@@ -20,6 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
   app.bind(NpmClient).toSelf();
   app.bind(YarnClient).toSelf();
   app.bind(PnpmClient).toSelf();
+  app.bind(BunClient).toSelf();
   app.bind(ClientManager).toSelf();
   app.bind(AddDependencyCommand).toSelf();
   app.resolve(AddDependencyCommand);

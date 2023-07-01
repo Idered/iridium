@@ -174,7 +174,14 @@ const viewDetails = () => {
       }"
     >
       <Loader class="icon" v-if="isUpdating" />
-      <BugIcon class="flex-shrink-0" v-if="isVulnerable" />
+      <BugIcon class="flex-shrink-0" v-else-if="isVulnerable" />
+      <!-- <img
+        v-else
+        class="icon"
+        :src="`https://github-icons.com/npm/${item.name}`"
+        width="20"
+        height="20"
+      /> -->
       <span
         class="name"
         :class="{ unused: isUnused }"
@@ -301,6 +308,11 @@ const viewDetails = () => {
 <style scoped>
 .icon {
   margin-right: 8px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-items: center;
 }
 .item {
   margin: 1px;

@@ -139,18 +139,23 @@ const devDependencyCount = computed(() => {
   return props.installedPackages.length - dependencyCount.value;
 });
 const outdatedDependencies = computed(() => {
-  return props.installedPackages.filter((item) => {
-    const versions = props.installedPackagesVersions[item.name] || [];
-    const coercedVersion =
-      minSatisfying(versions, item.version) ||
-      coerce(item.version)?.raw ||
-      "0.0.0";
-    const maxSatisfyingVersion = maxSatisfying(versions, item.version);
-    return (
-      typeof maxSatisfyingVersion === "string" &&
-      maxSatisfyingVersion !== coercedVersion
-    );
-  });
+  return props.installedPackages
+    .map((item) => {
+      const versions = props.installedPackagesVersions[item.name] || [];
+      item.maxSatisfyingVersion = maxSatisfying(versions, item.version);
+      return item;
+    })
+    .filter((item) => {
+      const versions = props.installedPackagesVersions[item.name] || [];
+      const coercedVersion =
+        minSatisfying(versions, item.version) ||
+        coerce(item.version)?.raw ||
+        "0.0.0";
+      return (
+        typeof item.maxSatisfyingVersion === "string" &&
+        item.maxSatisfyingVersion !== coercedVersion
+      );
+    });
 });
 const outdatedCount = computed(() => {
   return outdatedDependencies.value.length;
