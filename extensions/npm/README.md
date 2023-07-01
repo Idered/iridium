@@ -8,7 +8,7 @@
 - 🚀 Detect outdated dependencies and easily update
 - 📦 Manage multiple package.json files in monorepo
 - 🔢 Analyze size and load speed of each dependency
-- 🧶 Support for `npm`, `yarn` and `pnpm`
+- 🧶 Support for `npm`, `yarn`, `pnpm` and `bun`
 
 ![](https://i.imgur.com/Znvqflw.gif)
 
@@ -28,15 +28,15 @@ Search field shortcuts:
 
 ### Config
 
-| Option                              | Values                    | Description                                                                                                                             |
-| ----------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `iridium.npm.packageManager`        | **`npm`**, `yarn`, `pnpm` | Package manager used to install when there's no lock file.                                                                              |
-| `iridium.npm.runAudit`              | **`true`**, `false`       | Automatically run security audit(yarn, pnpm).                                                                                           |
-| `iridium.npm.showShortcuts`         | **`true`**, `false`       | Show shortcuts section in search dropdown.                                                                                              |
-| `iridium.npm.showAlgoliaInfo`       | **`true`**, `false`       | Show Algolia credits in search dropdown.                                                                                                |
-| `iridium.npm.showResultDescription` | **`true`**, `false`       | Show package description in search dropdown.                                                                                            |
-| `iridium.npm.excludeVersions`       | `[]`                      | Exclude package versions containing specified strings. For example you can add `beta` to exclude all versions including `beta` in name. |
-| `iridium.npm.maxNumberOfResults`    | `4`                       | Number of packages to display in search dropdown.                                                                                       |
+| Option                              | Values                           | Description                                                                                                                             |
+| ----------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `iridium.npm.packageManager`        | **`npm`**, `yarn`, `pnpm`, `bun` | Package manager used to install when there's no lock file.                                                                              |
+| `iridium.npm.runAudit`              | **`true`**, `false`              | Automatically run security audit(yarn, pnpm).                                                                                           |
+| `iridium.npm.showShortcuts`         | **`true`**, `false`              | Show shortcuts section in search dropdown.                                                                                              |
+| `iridium.npm.showAlgoliaInfo`       | **`true`**, `false`              | Show Algolia credits in search dropdown.                                                                                                |
+| `iridium.npm.showResultDescription` | **`true`**, `false`              | Show package description in search dropdown.                                                                                            |
+| `iridium.npm.excludeVersions`       | `[]`                             | Exclude package versions containing specified strings. For example you can add `beta` to exclude all versions including `beta` in name. |
+| `iridium.npm.maxNumberOfResults`    | `4`                              | Number of packages to display in search dropdown.                                                                                       |
 
 ## Powered by
 
