@@ -65,7 +65,7 @@ import {
   isSupportedVersion,
   withUpdate,
 } from "./lib/utils";
-import { API } from "./lib/api";
+import { API, GetPackageVersionsAndTagsResponse } from "./lib/api";
 import { Order, View } from "./enums";
 import coerce from "semver/functions/coerce";
 import { VSCode } from "@shared/helpers/use-vscode";
@@ -209,6 +209,19 @@ watch(packageJSON, (value) => {
   }
 });
 
+const versionsCache = new Map<string, GetPackageVersionsAndTagsResponse>();
+
+const getPackageVersionsAndTags = (name: string) => {
+  if (versionsCache.has(name)) {
+    return Promise.resolve(versionsCache.get(name)!)
+  }
+
+  return API.getPackageVersionsAndTags(name).then((res) => {
+    versionsCache.set(name, res);
+    return res;
+  });
+}
+
 watch(installedPackages, async (packages) => {
   // runDepCheck();
   installedPackagesVersions.value = {};
@@ -218,7 +231,7 @@ watch(installedPackages, async (packages) => {
     if (ver) {
       installedPackagesVersions.value[item.name] = [ver];
     }
-    API.getPackageVersionsAndTags(item.name).then((res) => {
+    getPackageVersionsAndTags(item.name).then((res) => {
       installedPackagesVersions.value[item.name] = res.versions.filter(
         (item) =>
           !store.state.config.excludeVersions.some((exclusion) =>
