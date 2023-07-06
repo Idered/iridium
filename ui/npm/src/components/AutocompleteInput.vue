@@ -239,7 +239,7 @@ watch(packageName, async (value) => {
   pendingRequests.value--;
 });
 
-const sizes = ref<Record<string, number | null>>({});
+const sizes = ref<Record<string, number | undefined>>({});
 const loadSizes = ref<any>(0);
 watch(packageSuggestions, async () => {
   clearTimeout(loadSizes.value);
@@ -250,9 +250,9 @@ watch(packageSuggestions, async () => {
       .map(async (item) => {
         try {
           const size = await API.getSizeInfo(`${item.name}@${item.version}`);
-          sizes.value[item.name] = size.gzip;
+          sizes.value[item.name] = size?.gzip;
         } catch (err) {
-          sizes.value[item.name] = null;
+          sizes.value[item.name] = undefined;
         }
       });
   }, 1000);

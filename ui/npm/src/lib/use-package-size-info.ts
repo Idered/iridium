@@ -16,6 +16,9 @@ const usePackageSizeInfo = () => {
         return cache.value.get(key);
       }
       const data = await API.getSizeInfo(key);
+      if (!data) {
+        return null;
+      }
       return cache.value
         .set(key, {
           name: data.name,
