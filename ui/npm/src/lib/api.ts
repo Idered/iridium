@@ -50,10 +50,28 @@ export class API {
 
     return res.hits[0]?.deprecated;
   }
+  static sizeCache: Record<string, GetSizeInfoResponse | null> = {};
+  static sizeQueryCache: Record<string, Promise<GetSizeInfoResponse | null> | undefined> = {};
   static getSizeInfo(query: string) {
-    return API.request<GetSizeInfoResponse>(
+    if (API.sizeCache[query] || API.sizeCache[query] === null) {
+      return Promise.resolve(API.sizeCache[query]);
+    }
+    if (API.sizeQueryCache[query]) {
+      return API.sizeQueryCache[query];
+    }
+    const promise = API.request<GetSizeInfoResponse>(
       `https://bundlephobia.com/api/size?package=${query}&record=true`
-    );
+    ).then((res) => {
+      API.sizeCache[query] = res;
+      return res;
+    }).catch(() => {
+      API.sizeCache[query] = null;
+      return null;
+    });
+
+    API.sizeQueryCache[query] = promise;
+
+    return promise;
   }
   static getSecurityAudit() {
     return API.vscode.fetch.post(`/security-audit`, {

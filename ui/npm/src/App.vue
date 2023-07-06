@@ -209,29 +209,17 @@ watch(packageJSON, (value) => {
   }
 });
 
-const versionsCache = new Map<string, GetPackageVersionsAndTagsResponse>();
-
-const getPackageVersionsAndTags = (name: string) => {
-  if (versionsCache.has(name)) {
-    return Promise.resolve(versionsCache.get(name)!)
-  }
-
-  return API.getPackageVersionsAndTags(name).then((res) => {
-    versionsCache.set(name, res);
-    return res;
-  });
-}
-
 watch(installedPackages, async (packages) => {
   // runDepCheck();
-  installedPackagesVersions.value = {};
-  installedPackagesTags.value = {};
+  // installedPackagesVersions.value = {};
+  // installedPackagesTags.value = {};
   for (const item of packages) {
+    if (installedPackagesVersions.value[item.name]) continue
     const ver = coerce(item.version)?.raw;
     if (ver) {
       installedPackagesVersions.value[item.name] = [ver];
     }
-    getPackageVersionsAndTags(item.name).then((res) => {
+    API.getPackageVersionsAndTags(item.name).then((res) => {
       installedPackagesVersions.value[item.name] = res.versions.filter(
         (item) =>
           !store.state.config.excludeVersions.some((exclusion) =>
