@@ -234,7 +234,7 @@ function handleSelect(option: Option) {
         <div
           ref="dropdown"
           v-if="isOpen"
-          class="absolute z-10 grid w-full overflow-auto dropdown text-[color:var(--vscode-foreground)]"
+          class="absolute z-10 grid w-full overflow-auto dropdown bg-[color:var(--vscode-dropdown-background)] codesandbox:bg-[color:var(--vscode-settings-textInputBackground)] codesandbox:border-[color:var(--vscode-sideBySideEditor-horizontalBorder)] text-[color:var(--vscode-foreground)]"
           :style="{
             maxHeight: `${
               position === 'top' ? maxHeightForTopPosition : maxHeight
@@ -292,8 +292,8 @@ function handleSelect(option: Option) {
 
 <style scoped>
 .dropdown {
+  padding: 1px;
   font-size: var(--vscode-font-size);
-  background: var(--vscode-settings-textInputBackground);
   border: 1px solid
     var(
       --vscode-settings-textInputBorder,
